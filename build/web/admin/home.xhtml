@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Home</title>
+    </h:head>
+    <h:body style="margin: 0px;">
+        <h:outputStylesheet library="css" name="theme_3.css"/>
+        <h:outputStylesheet library="css" name="style.css"/>
+        <h:form>
+            <p:growl id="growl" showDetail="true" life="3000" autoUpdate="true"/> 
+        </h:form>
+
+        <p:panel styleClass="HeaderDaCuoi">
+            <ui:include src="../template/header_admin.xhtml" />
+        </p:panel>
+
+        <p:panel styleClass="FooterDaCuoi">
+            <ui:include src="../template/footer_admin.xhtml" />
+        </p:panel>
+
+        <p:panel styleClass="MenuDaCuoi">
+            <ui:include src="../template/meu_admin.xhtml" /> 
+        </p:panel>
+
+        <p:panel id="content" styleClass="ContentDaCuoi">
+            <h:form id="formAdd">
+                <p:outputPanel styleClass="Wid100">
+                    <p:panelGrid styleClass="Wid100" columns="1">
+                        <p:row>
+                            <p:column styleClass="Wid100">
+
+                                <p:commandButton update=":formDialog:carDetail" value="Thêm khóa học"
+                                                 oncomplete="PF('dialog').show()" icon="ui-icon-search" styleClass="Right">
+                                    <f:setPropertyActionListener value="#{homeControllerAdmin.resetCourse()}" target="#{homeControllerAdmin.course}" />
+                                    <p:resetInput target=":formDialog:panelGirdInfoCourse" />
+                                </p:commandButton>
+
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:outputPanel>
+
+                <p:dataGrid var="course" value="#{homeControllerAdmin.listCourseByAdminCreate}" columns="3" layout="grid"
+                            rows="6" paginator="true" id="course"
+                            paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                            rowsPerPageTemplate="6,12,16" paginatorPosition="bottom">
+
+                    <f:facet name="header">
+                        Các khóa học của bạn
+                    </f:facet>
+
+                    <p:panel header="#{course.courseName}" style="text-align:center">
+                        <h:panelGrid columns="1" style="width:100%">
+                            <p:graphicImage value="../#{course.image}"/> 
+                            <p:link outcome="detailCourse_2" value="#{course.courseName}">
+                                <f:param name="courseId" value="#{course.idcourse}" />
+                            </p:link>
+                            <p:outputLabel value="Ngày tạo #{course.createDate}"/>
+                        </h:panelGrid>
+                    </p:panel>
+
+                </p:dataGrid>
+            </h:form>
+
+            <h:form id="formDialog" prependId="false">
+                <p:dialog header="Thêm khóa học mới" widgetVar="dialog" resizable="false" width="500">
+                    <p:outputPanel styleClass="Wid100">
+                        <p:row>
+                            <p:column styleClass="Wid100">
+                                <p:outputLabel value="">
+
+                                </p:outputLabel>
+                            </p:column>
+                        </p:row>
+                    </p:outputPanel>
+
+                    <p:outputPanel id="carDetail" styleClass="TexCenter" >
+                        <p:panelGrid styleClass="Wid100" id="panelGirdInfoCourse">
+
+                            <p:row>
+                                <p:column styleClass="Wid30">
+                                    <p:outputLabel value="Nhập tên khóa học"/>
+                                </p:column>
+                                <p:column styleClass="Wid70">
+                                    <p:inputText id="courseName" styleClass="Wid100" value="#{homeControllerAdmin.course.courseName}" required="true"
+                                                 requiredMessage="Chưa nhập tên khóa học">
+                                        <f:validator validatorId="project.validate.CourseValidate" />
+                                    </p:inputText>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="Wid30">
+
+                                </p:column>
+                                <p:column styleClass="Wid70">
+                                    <p:message for="courseName"/> 
+                                </p:column>
+
+                            </p:row>
+
+                            <p:row>
+                                <p:column styleClass="Wid30">
+                                    <p:outputLabel value="Chọn ngày tạo"/>
+                                </p:column>
+                                <p:column styleClass="Wid70">
+                                    <p:calendar id="courseDate" mask="99/99/9999" pattern="dd/MM/yyyy" styleClass="Wid100" required="true"
+                                                value="#{homeControllerAdmin.courseCreateDate}" requiredMessage="Chưa nhập ngày tháng" validatorMessage="Chưa nhập đúng định dạng">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </p:calendar>
+                                </p:column>
+
+                            </p:row>
+
+                            <p:row>
+                                <p:column styleClass="Wid30">
+
+                                </p:column>
+                                <p:column styleClass="Wid70">
+                                    <p:message for="courseDate"/>
+                                </p:column>
+
+                            </p:row>
+
+                            <p:row>
+                                <p:column styleClass="Wid30">
+                                    <p:outputLabel value="Lĩnh vực" />
+                                </p:column>
+                                <p:column styleClass="Wid70">
+                                    <p:inputText styleClass="Wid100" value="#{homeControllerAdmin.course.field}"/>
+                                </p:column>
+                            </p:row>
+
+                        </p:panelGrid>                    
+                    </p:outputPanel>
+
+                    <f:facet name="footer">
+                        <p:panelGrid styleClass="Wid100">
+                            <p:row>
+                                <p:column>
+                                    <p:commandButton id="addCourse" value="Thêm" styleClass="Right" update=":formAdd:course,:formDialog:panelGirdInfoCourse" 
+                                                     actionListener="#{homeControllerAdmin.addCourseByAdmin()}">                                         
+                                        <p:resetInput target=":formDialog:panelGirdInfoCourse"></p:resetInput>
+                                        <f:setPropertyActionListener value="#{homeControllerAdmin.resetCourse()}" target="#{homeControllerAdmin.course}" />
+                                    </p:commandButton>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </f:facet>   
+                </p:dialog>
+
+            </h:form>
+        </p:panel>
+
+    </h:body>
+</html>	

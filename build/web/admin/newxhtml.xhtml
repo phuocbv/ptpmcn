@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "htth://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>Login</title>
+    </h:head>
+    <h:body style="margin: 0px">
+        <h:outputStylesheet library="css" name="theme_3.css"/>
+        <h:outputStylesheet library="css" name="style.css"/>
+        <h:form style="" id="formLogin">
+            <p:growl id="growl" showDetail="true" sticky="true" life="3000" /> 
+
+            <p:panel styleClass="HeaderDaCuoi">
+
+            </p:panel>
+            <p:panel id="panel" styleClass="MenuDaCuoi">
+                <p:menu style="width: 95%">
+                    <p:submenu label="Trang chủ">
+                        <p:menuitem value="Khóa học hiện tại" url="/admin/home.xhtml" />
+                        <p:menuitem value="Thành viên khóa học" url="http://forum.primefaces.org/" />
+                        <p:menuitem value="Tài liệu của bạn" url="http://www.primefaces.org/documentation.html" />
+                    </p:submenu>
+                </p:menu>
+            </p:panel>
+
+            <p:panel  styleClass="FooterDaCuoi">
+
+            </p:panel>
+
+            <p:panel  styleClass="ContentDaCuoi">
+
+            </p:panel>
+
+
+        </h:form>
+
+
+
+    </h:body>
+</html>

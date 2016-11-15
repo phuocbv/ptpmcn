@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "htth://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>Login</title>
+    </h:head>
+    <h:body style="margin: 0px">
+        <h:outputStylesheet library="css" name="theme_3.css"/>
+        <h:outputStylesheet library="css" name="style.css"/>
+
+        <p:growl id="growl" showDetail="true" life="3000" autoUpdate="true" /> 
+
+        <p:panel styleClass="HeaderDaCuoi">
+            <ui:include src="../template/header.xhtml"/>
+        </p:panel>
+        <p:panel id="panel" styleClass="MenuDaCuoi">
+            <ui:include src="../template/menu_user.xhtml"/>
+        </p:panel>
+
+        <p:panel  styleClass="FooterDaCuoi">
+            <ui:include src="../template/footer.xhtml"/>
+        </p:panel>
+
+        <p:panel  styleClass="ContentDaCuoi">
+
+
+            <h:form style="" id="formView">
+                <p:growl id="growl" showDetail="true" sticky="true" life="3000" /> 
+                <p:outputPanel styleClass="Wid100">
+                    <p:panelGrid styleClass="Wid100">
+                        <p:row>
+                            <p:column styleClass="Wid70">
+                                <p:panel id="panel" style="height: 700px; overflow: auto">
+                                    <p:media value="#{courseDetailControllerAdmin.urlFile}" width="100%" height="500px" 
+                                             player="#{courseDetailControllerAdmin.typeFile}"> </p:media>
+                                </p:panel>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:outputPanel>
+
+
+            </h:form>
+
+        </p:panel>
+
+    </h:body>
+</html>

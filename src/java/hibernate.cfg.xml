@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+  <session-factory>
+    <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+    <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+    <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/mydb?characterEncoding=utf8</property>
+    <property name="hibernate.connection.username">root</property>
+    <property name="hibernate.connection.password"/>
+    <mapping class="project.DO.Course"/>
+    <mapping class="project.DO.AccountInfo"/>
+    <mapping class="project.DO.ShareFile"/>
+    <mapping class="project.DO.Account"/>
+    <mapping class="project.DO.ShareCourse"/>
+    <mapping class="project.DO.Document"/>
+    <mapping class="project.DO.CommentCourse"/>
+    <mapping class="project.DO.Index"/>
+    <mapping class="project.DO.CommentFile"/>
+  </session-factory>
+</hibernate-configuration>

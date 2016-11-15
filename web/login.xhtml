@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "htth://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>Login</title>
+    </h:head>
+    <h:body>
+        <h:outputStylesheet library="css" name="theme_5.css"/>
+        <h:outputStylesheet library="css" name="style.css"/>
+        <h:form style="position: relative" id="formLogin">
+            <p:growl id="growl" showDetail="true" sticky="true" life="3000" /> 
+            <p:panel styleClass="Wid25 element">
+
+                <p:panelGrid styleClass="Wid100" columns="1" >
+                    <p:outputLabel styleClass="Wid100" id="titleLogin" value="Login" style="font-size: 30px;" />
+                    <p:inputText id="username"  required="true" requiredMessage="Chưa nhập tên người dùng" 
+                                 styleClass="Wid85" style="margin-top:50px " value="#{loginController.account.username}" placeholder="Username" >
+                    </p:inputText>
+                    <p:message for="username"/>
+                    <p:password id="password" requiredMessage="Chưa nhập mật khẩu" styleClass="Wid85" 
+                                style="margin-top:20px " value="#{loginController.account.password}" placeholder="Password" required="true">    
+                    </p:password>
+                    <p:message for="password"/>
+                    <p:selectManyCheckbox style="margin-top: 10px">
+                        <f:selectItem itemValue="" itemLabel="Lưu tài khoản"/>
+                    </p:selectManyCheckbox>
+                    <p:commandButton styleClass="Wid85" value="Login" style="margin-top:10px " action="#{loginController.doLogin()}" update="growl, formLogin"></p:commandButton>
+                </p:panelGrid>
+                <div class="EmptyBox15"></div>
+            </p:panel>
+        </h:form>
+
+
+        <style>
+            #formLogin\:iconUsername{
+                background: url(resources/image/people-icon.png);
+            }
+            body{
+                background: url(resources/image/anh_nen1920x1080.jpg) no-repeat center center fixed;
+                -webkit-background-size: cover;
+                -moz-background-size: cover;
+                -o-background-size: cover;
+                background-size: 100% 100%;
+            }
+            .ui-widget-content{
+                border: none;
+            }
+            .ui-panelgrid-cell{
+                border: none !important;
+            }
+            .ui-panel.ui-widget.ui-widget-content.ui-corner-all{
+                border:  1px solid #B3D3EA;
+                padding: 0px !important;
+            }
+            .ui-panel-content.ui-widget-content{
+                padding: 0px !important;
+            }
+
+            .ui-inputfield.ui-inputtext.ui-widget.ui-state-default.ui-corner-all, 
+            .ui-inputfield.ui-password.ui-widget.ui-state-default.ui-corner-all{
+                height: 30px;
+                box-shadow: none;
+                background: #FFF;
+                color: #2779aa;
+            }
+
+            .element {
+                text-align: center;
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%) translateY(50%);
+            }
+
+            .ui-selectmanycheckbox.ui-widget{
+                margin-top: 10px;
+                padding-left: 6%;
+            }
+
+            .ui-panelgrid.ui-widget tbody tr:first-child .ui-panelgrid-cell{
+                background: #BFE4EF;
+                padding: none;
+                height: 45px;
+                border-top-left-radius: 6px;
+                border-top-right-radius: 6px;
+            }
+        </style>
+    </h:body>
+</html>

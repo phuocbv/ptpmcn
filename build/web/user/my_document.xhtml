@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:body>
+
+        <ui:composition template="../template/template.xhtml">
+            <ui:define name="title">
+                My Document
+            </ui:define>
+
+
+            <ui:define name="content">
+                <h:form>
+
+                    <p:outputPanel styleClass="Wid100 TexRight">
+                        <p:commandButton value="Thêm tài liệu mới" oncomplete="PF('dialog').show()"></p:commandButton>
+                        <!--                         <p:commandButton update=":form:carDetail" value="Thêm khóa học"
+                                                                         oncomplete="PF('dialog').show()" icon="ui-icon-search" styleClass="Right">
+                                                            <f:setPropertyActionListener value="#{homeController.resetCourse()}" target="#{homeController.course}" />
+                                                            <p:resetInput target="panelGirdInfoCourse" />
+                                                        </p:commandButton>-->
+                    </p:outputPanel>
+
+                    <div class="EmptyBox5"></div>
+                    <p:outputPanel styleClass="">
+
+
+                        <p:contextMenu for="cars">
+                            <p:menuitem value="View" >
+
+                            </p:menuitem>
+                            <p:menuitem value="Chia sẻ" oncomplete="PF('dialogShare').show()" update=":formDialog:shareDocument">
+
+                            </p:menuitem>
+                            <p:menuitem value="Delete" oncomplete="PF('dialogConfirm').show()">
+                               
+                            </p:menuitem>
+                        </p:contextMenu>
+
+                        <p:dataTable id="cars" var="car" value="#{demoController.list}" rowKey="#{car.name}"
+                                     selection="#{demoController.a}" selectionMode="single"
+                                     rows="14" paginator="true"
+                                     paginatorTemplate="{CurrentPageReport} {PreviousPageLink} {PageLinks} {NextPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="10, 14, 20 "
+                                     paginatorPosition="bottom">
+                            <f:facet name="header">
+                                Danh sách tài liệu của bạn
+                            </f:facet>
+
+                            <p:column styleClass="Wid50" headerText="Tên tài liệu">
+                                <h:outputText value="#{car.name}" />
+
+                            </p:column>
+                            <p:column styleClass="Wid25" headerText="Chủ sở hữu">
+                                <h:outputText value="#{car.name}" />
+                            </p:column>
+                            <p:column styleClass="Wid25" headerText="Thời gian tạo">
+                                <h:outputText value="#{car.name}" />
+                            </p:column>
+                        </p:dataTable> 
+                    </p:outputPanel>
+                    <p:commandButton value="dfsdsd">
+                         <p:confirm header="Xác thưc" message="Bạn có chắc chắn xóa?"/>
+                    </p:commandButton>
+                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                        <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                    </p:confirmDialog>
+                </h:form>
+
+
+                <h:form id="formDialog">
+
+                    <!--dialog add document-->
+                    <p:dialog header="Thêm tài liệu" id="dialogAdd" widgetVar="dialog" resizable="false" width="500">
+                        <p:outputPanel styleClass="Wid100">
+                            <p:panelGrid styleClass="Wid100">
+                                <p:row>
+                                    <p:column styleClass="Wid30">
+                                        <p:outputLabel value="Chọn tài liệu"></p:outputLabel>
+                                    </p:column>
+                                    <p:column styleClass="Wid70">
+                                        <p:fileUpload value="#{demoController.file}" mode="simple"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:outputPanel>
+
+                        <f:facet name="footer"> 
+                            <p:outputPanel styleClass="Wid100 TexRight">
+                                <p:commandButton value="Thêm"></p:commandButton>
+                            </p:outputPanel>
+                        </f:facet>
+                    </p:dialog>
+                    <!--dialog add document-->
+
+                    <!--dialog share document-->
+                    <p:dialog header="Chia sẻ tài liệu" id="shareDocument" widgetVar="dialogShare" resizable="false" width="500">
+                        <p:outputPanel>
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column styleClass="Wid40">
+                                        <p:outputLabel value="#{demoController.a.name}"></p:outputLabel>
+                                    </p:column>
+                                    <p:column styleClass="Wid60">
+                                        <p:selectCheckboxMenu id="menu" value="#{demoController.selectedCities}" label="Danh sách người chia sẻ"
+                                                              filter="true" filterMatchMode="startsWith" styleClass="Wid100">
+                                            <f:selectItems value="#{demoController.cities}" />
+                                        </p:selectCheckboxMenu>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:outputPanel>
+
+                        <f:facet name="footer">
+                            <p:outputPanel styleClass="Wid100 TexRight">
+                                <p:commandButton value="Chia sẻ"></p:commandButton>
+                            </p:outputPanel>
+                        </f:facet>
+                    </p:dialog>
+                    <!--dialog share document-->
+                    
+                    <p:dialog header="Xác thực" resizable="false" widgetVar="dialogConfirm" width="200">
+                        <p:outputLabel value="Bạn có chắc chắn xóa?"></p:outputLabel>
+                        <f:facet name="footer">
+                            <p:outputPanel styleClass="Wid100">
+                                <p:panelGrid>
+                                    <p:row>
+                                        <p:column styleClass="Wid50">
+                                            <p:commandButton value="Yes"  oncomplete="PF('dialogConfirm').hide()"></p:commandButton>
+                                        </p:column>
+                                         <p:column styleClass="Wid50">
+                                             <p:commandButton value="No" onclick="PF('dialogConfirm').hide()" ></p:commandButton>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                            </p:outputPanel>
+                        </f:facet>
+                    </p:dialog>
+                    
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </h:body>
+</html>

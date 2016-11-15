@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <h:head>
+        <title>My document</title>
+    </h:head>
+    <h:body style="margin: 0px">
+        <h:outputStylesheet library="css" name="theme_3.css"/>
+        <h:outputStylesheet library="css" name="style.css"/>
+
+        <p:growl id="growl" showDetail="true" life="3000" autoUpdate="true" /> 
+
+        <p:panel styleClass="HeaderDaCuoi">
+            <ui:include src="../template/header.xhtml"/>
+        </p:panel>
+        <p:panel id="panel" styleClass="MenuDaCuoi">
+            <ui:include src="../template/menu_user.xhtml"/>
+        </p:panel>
+
+        <p:panel  styleClass="FooterDaCuoi">
+            <ui:include src="../template/footer.xhtml"/>
+        </p:panel>
+
+        <p:panel  styleClass="ContentDaCuoi">
+
+            <h:form id="formMyDocument">
+
+                <p:outputPanel styleClass="Wid100 TexRight">
+                    <p:commandButton value="Thêm tài liệu mới" oncomplete="PF('dialog').show()"></p:commandButton>
+                </p:outputPanel>
+
+                <div class="EmptyBox5"></div>
+                <p:outputPanel styleClass="">
+
+
+                    <p:contextMenu for="documents">
+                        <p:menuitem value="Xem" oncomplete="PF('viewDocument').show()" 
+                                    update=":formDialogViewDocument:panelDialogViewDocument"
+                                    actionListener="#{myDocumentController.viewFile()}">
+
+                        </p:menuitem>
+                        <p:menuitem value="Chia sẻ" oncomplete="PF('dialogShare').show()" update=":formShareDialog:shareDocument">
+                            <f:setPropertyActionListener target="#{myDocumentController.listAllAccount}" 
+                                                         value="#{myDocumentController.listAccountNotShareFile()}"/>
+                        </p:menuitem>
+                        <p:menuitem value="Tải xuống" ajax="false">
+                            <p:fileDownload value="#{myDocumentController.downloadFile()}" />
+                        </p:menuitem>
+                        <p:menuitem value="Xóa" oncomplete="PF('dialogConfirm').show()">
+
+                        </p:menuitem>
+                    </p:contextMenu>
+                    <p:dataTable id="documents" var="document" value="#{myDocumentController.listDocument}" 
+                                 rowKey="#{document.idfile}"
+                                 selection="#{myDocumentController.selectedDocument}" selectionMode="single"
+                                 rows="14" paginator="true"
+                                 paginatorTemplate="{CurrentPageReport} {PreviousPageLink} {PageLinks} {NextPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="10, 14, 20 "
+                                 paginatorPosition="bottom">
+                        <f:facet name="header">
+                            Danh sách tài liệu của bạn
+                        </f:facet>
+
+                        <p:column styleClass="Wid40" headerText="Tên tài liệu">
+                            <h:outputText value="#{document.titleFile}" />
+
+                        </p:column>
+                        <p:column styleClass="Wid20" headerText="Kiểu tài liệu">
+                            <h:outputText value="#{document.type}" />
+                        </p:column>
+                        <p:column styleClass="Wid20" headerText="Kích thước">
+                            <h:outputText value="#{document.size}" />
+                        </p:column>
+                        <p:column styleClass="Wid20" headerText="Thời gian tạo">
+                            <h:outputText value="#{document.createDate}" />
+                        </p:column>
+                    </p:dataTable> 
+                </p:outputPanel>
+            </h:form>
+        </p:panel>
+
+        <h:form id="formDialog" enctype="multipart/form-data">
+            <!--dialog add document-->
+            <p:dialog header="Thêm tài liệu" id="dialogAdd" widgetVar="dialog" resizable="false" width="500">
+                <p:outputPanel styleClass="Wid100">
+                    <p:panelGrid styleClass="Wid100">
+                        <p:row>
+                            <p:column styleClass="Wid30">
+                                <p:outputLabel value="Chọn tài liệu"></p:outputLabel>
+                            </p:column>
+                            <p:column styleClass="Wid70">
+                                <h:inputFile id="choseFile" value="#{myDocumentController.file}"  
+                                             required="true" requiredMessage="Chưa chọn file"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:outputPanel>
+
+                <f:facet name="footer"> 
+                    <p:outputPanel styleClass="Wid100 TexRight">
+                        <p:commandButton value="Thêm" ajax="false"
+                                         actionListener="#{myDocumentController.uploadFile()}"
+                                         update=":formMyDocument:documents"></p:commandButton>
+                    </p:outputPanel>
+                </f:facet>
+            </p:dialog>
+            <!--dialog add document-->
+        </h:form>
+
+        <h:form id="formShareDialog">
+            <!--dialog share document-->
+            <p:dialog header="Chia sẻ tài liệu" id="shareDocument" widgetVar="dialogShare" resizable="false" width="500">
+                <p:outputPanel id="panelDialogShareFile">
+                    <p:panelGrid>
+                        <p:row>   
+                            <p:column styleClass="Wid40">
+                                <p:outputLabel value="Tài liệu" />
+                            </p:column>
+                            <p:column styleClass="Wid60">
+                                <p:outputLabel value="#{myDocumentController.selectedDocument.titleFile}"></p:outputLabel>
+                            </p:column>
+
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="Wid40">
+                                <p:outputLabel value="Danh sách chia sẻ"/>
+                            </p:column>
+                            <p:column styleClass="Wid60">
+                                <p:column styleClass="Wid60">
+                                    <p:selectCheckboxMenu id="menu" value="#{myDocumentController.accountSelected}" 
+                                                          label="Danh sách người chia sẻ"
+                                                          filter="true" filterMatchMode="startsWith" styleClass="Wid100">
+                                        <f:selectItems value="#{myDocumentController.listAllAccount}" 
+                                                       var="item" itemLabel="#{item.username}" itemValue="#{item.idaccount}"/>
+                                    </p:selectCheckboxMenu>
+                                </p:column>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:outputPanel>
+
+                <f:facet name="footer">
+                    <p:outputPanel styleClass="Wid100 TexRight">
+                        <p:commandButton value="Chia sẻ" actionListener="#{myDocumentController.shareFile()}" 
+                                         update=":formShareDialog:panelDialogShareFile">
+                            <f:setPropertyActionListener target="#{myDocumentController.listAllAccount}"
+                                                         value="#{myDocumentController.listAccountNotShareFile()}"/>
+                        </p:commandButton>
+                    </p:outputPanel>
+                </f:facet>
+            </p:dialog>
+            <!--dialog share document-->
+        </h:form>
+        <h:form>
+            <p:dialog header="Xác thực" resizable="false" widgetVar="dialogConfirm" width="200">
+                <p:outputLabel value="Bạn có chắc chắn xóa?"></p:outputLabel>
+                <f:facet name="footer">
+                    <p:outputPanel styleClass="Wid100">
+                        <p:panelGrid>
+                            <p:row>
+                                <p:column styleClass="Wid50">
+                                    <p:commandButton value="Yes" oncomplete="PF('dialogConfirm').hide()"
+                                                     actionListener="#{myDocumentController.deleteDocument()}"
+                                                     update=":formMyDocument:documents"></p:commandButton>
+                                </p:column>
+                                <p:column styleClass="Wid50">
+                                    <p:commandButton value="No" onclick="PF('dialogConfirm').hide()" ></p:commandButton>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </p:outputPanel>
+                </f:facet>
+            </p:dialog>
+        </h:form>
+
+        <h:form id="formDialogViewDocument">
+            <p:dialog header="Xem tài liệu" resizable="false" widgetVar="viewDocument" width="700">
+                <p:outputPanel id="panelDialogViewDocument">
+                    <p:row>
+                        <p:column styleClass="Wid70">
+                            <p:panel id="panel">
+                                <p:outputPanel rendered="#{myDocumentController.editor}">
+                                    <p:editor value="#{myDocumentController.urlFile}"
+                                              styleClass="Wid100" height="500">
+                                    </p:editor>
+                                </p:outputPanel>
+                                <!-- /office -->
+
+                                <!-- pdf -->
+                                <p:outputPanel rendered="#{myDocumentController.pdf}">
+                                    <p:media value="#{myDocumentController.urlFile}" styleClass="Wid100"
+                                             height="500" player="pdf" />
+                                </p:outputPanel>
+                                <!-- /pdf -->
+
+                                <!-- pdf -->
+                                <p:outputPanel rendered="#{myDocumentController.image}">
+                                    <p:media value="#{myDocumentController.urlFile}" styleClass="Wid100"
+                                             height="500" player="flash" />
+                                </p:outputPanel>
+                                <!-- /pdf -->
+
+                                <!-- video -->
+                                <p:outputPanel rendered="#{myDocumentController.video}">
+                                    <video controls="controls"
+                                           style="margin: 0 auto; display: block;height: 450px;overflow: auto">
+                                        <source src="#{myDocumentController.urlFile}" type="video/mp4" />
+                                    </video>
+                                </p:outputPanel>
+                                <!-- /video -->
+
+                                <!-- mp3 -->
+                                <p:outputPanel rendered="#{myDocumentController.mp3}">
+                                    <p:media value="#{myDocumentController.urlFile}" width="100%"
+                                             height="100" player="quicktime">
+                                        <f:param name="autoPlay" value="false" />
+                                    </p:media>
+                                </p:outputPanel>
+                                <!-- /mp3 -->
+                            </p:panel>
+                        </p:column>
+                    </p:row>
+                </p:outputPanel>
+
+                <f:facet name="footer">
+                    <p:outputPanel styleClass="Wid100">
+                        <p:panelGrid>
+                            <p:row>                      
+                                <p:column styleClass="Wid50">
+                                    <p:commandButton value="Ẩn" onclick="PF('viewDocument').hide()" ></p:commandButton>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </p:outputPanel>
+                </f:facet>
+            </p:dialog>
+        </h:form>
+    </h:body>
+</html>

@@ -1,0 +1,34 @@
+.ui-datepicker-prev.ui-corner-all{
+    background: #9ECBDC;
+}
+.ui-datepicker-next.ui-corner-all{
+    background: #9ECBDC;
+}
+.ui-datepicker-today .ui-state-default.ui-state-highlight{
+    color: #000000;
+}
+.ui-selectcheckboxmenu-trigger.ui-state-default.ui-corner-right .ui-icon.ui-icon-triangle-1-s{
+    background-image: url(../resources/image/ui-icons_down.png);
+}
+
+.HeaderDaCuoi{
+    left: 0px;right: 0px;  top: 0px; height: 50px; position: absolute;
+}
+
+.FooterDaCuoi{
+    left: 0px;right: 0px;  bottom: 0px; height: 50px;position: absolute;
+}
+
+.MenuDaCuoi{
+    left: 0px;top: 65px; position: absolute;bottom: 65px; width:18%;
+    overflow: auto;
+        
+}
+.ContentDaCuoi{
+    left: 18%; right: 0px; bottom: 65px; top: 65px;
+    position: absolute;margin-left: 15px; overflow: auto;
+}
+
+.ui-dialog-buttonpane.ui-dialog-footer.ui-widget-content.ui-helper-clearfix{
+    text-align: center;
+}

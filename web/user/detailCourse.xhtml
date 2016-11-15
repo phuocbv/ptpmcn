@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Course Detail</title>
+    </h:head>
+    <h:body>
+        <h:outputStylesheet library="css" name="theme_3.css"/>
+        <h:outputStylesheet library="css" name="style.css"/>
+        <p:panel  styleClass="HeaderDaCuoi">
+            <ui:include src="../template/header.xhtml" />
+        </p:panel>
+
+        <p:panel styleClass="MenuDaCuoi">
+            <ui:include src="../template/menu_user.xhtml" />
+        </p:panel>
+
+        <p:panel styleClass="FooterDaCuoi">
+
+        </p:panel>
+
+        <p:panel  styleClass="ContentDaCuoi">
+            <h:form id="form">
+                <f:metadata>
+                    <f:viewParam name="courseId" value="#{courseDetailController.courseId}" />
+                </f:metadata>
+
+                <p:growl id="growl" showDetail="true" life="3000" autoUpdate="true"/>  
+                <p:outputPanel styleClass="Wid100 TexCenter">
+                    <p:outputLabel value="Thông tin chi tiết khóa học "></p:outputLabel>
+                </p:outputPanel>
+
+                <div class="EmptyBox5"></div>
+
+                <p:outputPanel id="clone" styleClass="Wid100 TexRight">
+                    <p:commandButton id="btnClone" value="Clone khóa học" disabled="#{courseDetailController.cloned}"
+                                     update=" :form:clone , :form:tree, :form:contextMenu" 
+                                     actionListener="#{courseDetailController.cloneCourse()}">
+
+                    </p:commandButton>
+
+                </p:outputPanel>
+
+                <p:panelGrid styleClass="Wid100" >
+                    <p:row>
+                        <p:column styleClass="Wid30 TexCenter">
+                            <p:outputLabel value="Cấu trúc khóa học"></p:outputLabel>
+                        </p:column>
+                        <p:column styleClass="Wid70 TexCenter">
+                            <p:outputLabel value="Nội dung bài học"></p:outputLabel>
+                        </p:column>
+                    </p:row>
+
+                    <p:row>
+                        <p:column styleClass="Wid30" >
+                            <p:tree id="tree" value="#{courseDetailController.root}" var="node" 
+                                    selectionMode="single" selection="#{courseDetailController.selectedNode}"
+                                    draggable="#{courseDetailController.cloned}" droppable="#{courseDetailController.cloned}" 
+                                    style="width: 100% !important; height: 550px; overflow: auto">
+
+                                <p:treeNode>
+                                    <h:outputText value="#{node.name}" />
+                                </p:treeNode>
+                            </p:tree>
+
+                            <p:contextMenu for="tree" id="contextMenu">
+                                <p:menuitem value="Thêm thư mục" oncomplete="PF('dialogAddForder').show()"
+                                            update=":formDialogAddForder:panelDialogAddForder"
+                                            rendered="#{courseDetailController.cloned}">
+                                    <f:setPropertyActionListener value="#{courseDetailController.resetIndex()}" 
+                                                                 target="#{courseDetailController.index}"/>
+                                    <p:resetInput target=":formDialogAddForder:dialogAddForder"/>
+                                </p:menuitem>
+
+                                <p:menuitem value="Thêm file" oncomplete="PF('dialogAddFile').show()" 
+                                            update=":formDialogAddFile:panelDialogAddFile"
+                                            rendered="#{courseDetailController.cloned}">
+                                    <f:setPropertyActionListener value="#{courseDetailController.resetIndex()}" 
+                                                                 target="#{courseDetailController.index}"/>
+                                    <f:setPropertyActionListener value="#{null}" 
+                                                                 target="#{courseDetailController.file}"/>
+                                    <p:resetInput target=":formDialogAddFile:dialogAddFile"/>
+                                </p:menuitem>
+                                <p:menuitem value="Xem chi tiết"
+                                            actionListener="#{courseDetailController.viewFile()}"
+                                            update=":form:panel"/>
+                                <p:menuitem value="Tải xuống" actionListener="#{courseDetailController.downloadFile()}"/>
+                                
+                                <p:menuitem value="Chia sẻ file"/>
+                                <p:menuitem value="Xóa" oncomplete="PF('dialogConfirmDelete').show()"
+                                            rendered="#{courseDetailController.cloned}"/>
+                            </p:contextMenu>
+                        </p:column>
+
+                        <p:column styleClass="Wid70">
+
+
+                            <p:panel id="panel" style="height: 550px; overflow: auto">
+                                <!-- office : word -->
+                                <p:outputPanel rendered="#{courseDetailController.editor}">
+                                    <p:editor value="#{courseDetailController.urlFile}"
+                                              styleClass="Wid100" height="500">
+                                    </p:editor>
+                                </p:outputPanel>
+                                <!-- /office -->
+
+                                <!-- pdf -->
+                                <p:outputPanel rendered="#{courseDetailController.pdf}">
+                                    <p:media value="#{courseDetailController.urlFile}" styleClass="Wid100"
+                                             height="500" player="pdf" />
+                                </p:outputPanel>
+                                <!-- /pdf -->
+
+                                <!-- pdf -->
+                                <p:outputPanel rendered="#{courseDetailController.image}">
+                                    <p:media value="#{courseDetailController.urlFile}" styleClass="Wid100"
+                                             height="500" player="flash" />
+                                </p:outputPanel>
+                                <!-- /pdf -->
+
+                                <!-- video -->
+                                <p:outputPanel rendered="#{courseDetailController.video}">
+                                    <video controls="controls"
+                                           style="margin: 0 auto; display: block;height: 450px;overflow: auto">
+                                        <source src="#{courseDetailController.urlFile}" type="video/mp4" />
+                                    </video>
+                                </p:outputPanel>
+                                <!-- /video -->
+
+                                <!-- mp3 -->
+                                <p:outputPanel rendered="#{courseDetailController.mp3}">
+                                    <p:media value="#{courseDetailController.urlFile}" width="100%"
+                                             height="100" player="quicktime">
+                                        <f:param name="autoPlay" value="false" />
+                                    </p:media>
+                                </p:outputPanel>
+                                <!-- /mp3 -->
+                            </p:panel>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </h:form>
+        </p:panel>
+
+        <h:form id="formDialog">
+            <p:dialog id="dialogShare" widgetVar="dialogShare" resizable="false" width="500" header="Chia sẻ khóa học">
+                <p:outputPanel styleClass="Wid100" id="panelDialogShare">
+                    <p:panelGrid styleClass="Wid100">
+                        <p:row>
+                            <p:column styleClass="Wid40">
+                                <p:outputLabel value="Chọn người chia sẻ"></p:outputLabel>
+                            </p:column>
+                            <p:column styleClass="Wid60">
+                                <p:selectCheckboxMenu value="#{courseDetailController.listIdMemberNotShareCouse}" 
+                                                      label="Danh sách người chia sẻ"
+                                                      filter="true" filterMatchMode="startsWith" styleClass="Wid100" >
+                                    <f:selectItems itemLabel="#{item.accountName}" itemValue="#{item.idaccount}"
+                                                   value="#{courseDetailController.listMemberNotShareCourse}" var="item"/>
+                                </p:selectCheckboxMenu>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:outputPanel>
+
+                <f:facet name="footer">
+                    <p:outputPanel styleClass="Wid100 TexRight">
+                        <p:commandButton value="Chia sẻ">
+                            <p:resetInput target=":formDialog:panelDialogShare"/>
+                        </p:commandButton>
+                    </p:outputPanel>
+                </f:facet>
+            </p:dialog>
+        </h:form>
+
+
+        <h:form id="formDialogAddForder">
+            <p:dialog id="dialogAddForder" resizable="false" width="500" header="Thêm thư mục" widgetVar="dialogAddForder">
+                <p:outputPanel id="panelDialogAddForder" styleClass="Wid100">
+                    <p:panelGrid styleClass="Wid100">
+                        <p:row>
+                            <p:column styleClass="Wid40">
+                                <p:outputLabel value="Thư mục gốc"></p:outputLabel>
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{courseDetailController.selectedNode.data.name}"/>                              
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="Wid40">
+                                <p:outputLabel value="Tên thư mục"></p:outputLabel>
+                            </p:column>
+                            <p:column styleClass="Wid60">
+                                <p:inputText styleClass="Wid100" value="#{courseDetailController.index.name}"/>
+                            </p:column>
+                        </p:row>
+
+                    </p:panelGrid>   
+                </p:outputPanel>
+                <f:facet name="footer" >
+                    <p:outputPanel styleClass="Wid100 TexRight">
+
+                        <p:commandButton value="Thêm"
+                                         actionListener="#{courseDetailController.addIndex()}"
+                                         update=":form:tree, :formDialogAddForder:panelDialogAddForder">
+                            <p:resetInput target=":formDialogAddForder:dialogAddForder"/>
+                            <f:setPropertyActionListener value="#{courseDetailController.resetIndex()}" 
+                                                         target="#{courseDetailController.index}"/>          
+                        </p:commandButton>
+                    </p:outputPanel>
+                </f:facet>
+            </p:dialog>
+        </h:form>
+
+
+        <!-- form add file into forder -->
+        <h:form id="formDialogAddFile" enctype="multipart/form-data">
+            <p:dialog id="dialogAddFile" widgetVar="dialogAddFile" resizable="false" width="500" header="Thêm file">                     
+                <p:outputPanel id="panelDialogAddFile" styleClass="Wid100">
+                    <p:panelGrid styleClass="Wid100">
+                        <p:row>
+                            <p:column styleClass="Wid40">
+                                <p:outputLabel value="Thư mục gốc"></p:outputLabel>
+                            </p:column>
+                            <p:column styleClass="Wid60">
+                                <p:outputLabel value="#{courseDetailController.selectedNode.data.name}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="Wid40">
+                                <p:outputLabel value="Chọn tên file"></p:outputLabel>
+                            </p:column>
+                            <p:column styleClass="Wid60">
+                                <p:inputText id="indexName" styleClass="Wid100" value="#{courseDetailController.index.name}" required="true"
+                                             requiredMessage="Không được để trống"></p:inputText>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="Wid40">
+                                <p:outputLabel value="Chọn file" />
+                            </p:column>
+                            <p:column styleClass="Wid60">
+                                <h:inputFile id="choseFile" value="#{courseDetailController.file}"  
+                                             required="true" requiredMessage="Chưa chọn file"/>
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column styleClass="Wid40">
+
+                            </p:column>
+                            <p:column>
+                                <p:message for="choseFile"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:outputPanel>
+
+                <f:facet name="footer">
+                    <p:outputPanel styleClass="Wid100 TexRight">
+                        <p:commandButton value="Thêm" ajax="false"
+                                         actionListener="#{courseDetailController.addFile()}"
+                                         update=":form:tree">
+                            <f:setPropertyActionListener value="#{courseDetailController.resetIndex()}" 
+                                                         target="#{courseDetailController.index}"/>
+                            <p:resetInput target=":formDialogAddFile:dialogAddFile"/>
+                        </p:commandButton>
+
+                    </p:outputPanel>
+                </f:facet>
+
+            </p:dialog>
+        </h:form>
+
+        <h:form>
+            <p:dialog header="Xác thực" resizable="false" widgetVar="dialogConfirmDelete" width="200">
+                <p:outputLabel value="Bạn có chắc chắn xóa?"></p:outputLabel>
+                <f:facet name="footer">
+                    <p:outputPanel styleClass="Wid100">
+                        <p:panelGrid>
+                            <p:row>
+                                <p:column styleClass="Wid50">
+                                    <p:commandButton value="Yes"  oncomplete="PF('dialogConfirmDelete').hide()"
+                                                     actionListener="#{courseDetailController.deleteFile()}"
+                                                     update=":form:tree"></p:commandButton>
+                                </p:column>
+                                <p:column styleClass="Wid50">
+                                    <p:commandButton value="No" onclick="PF('dialogConfirmDelete').hide()" ></p:commandButton>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </p:outputPanel>
+                </f:facet>
+            </p:dialog>
+        </h:form>
+
+    </h:body>
+</html>

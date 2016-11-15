@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+   <h:body>
+      <ui:composition template="template/template.xhtml">
+          <ui:define name="title">
+              Home
+          </ui:define>
+          
+          <ui:define name="header">
+              header
+          </ui:define>
+          
+          <ui:define name="footer">
+              footer
+          </ui:define>
+          
+         <ui:define name="content">
+             <p:breadCrumb>
+                 <p:menuitem value="Home" url="abc"/>
+                 <p:menuitem icon="ui-icon-carat-1-e" url="s"/>
+            </p:breadCrumb>
+           Home
+            <p:panel id="basic" header="Basic" footer="Movie Details" style="margin-bottom:20px">
+        <h:panelGrid columns="2" cellpadding="10">
+               
+                <h:outputText
+                    value="The story begins as Don Vito Corleone..." />
+            </h:panelGrid>
+        </p:panel>
+         </ui:define>
+      </ui:composition>
+   </h:body>
+</html>	
