@@ -41,6 +41,27 @@ public class ShareCourseDAO {
         return shareCourseID;
     }
 
+    public static boolean deleteShareCourseById(ShareCourse shareCourse) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+        boolean result = false;
+        try {
+            tx = session.beginTransaction();
+            ShareCourse s = (ShareCourse) session.get(ShareCourse.class, shareCourse.getIdshareCourse());
+            session.delete(s);
+            tx.commit();
+            result = true;
+        } catch (HibernateException e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+        return result;
+    }
+
     /**
      * admin and user
      *
@@ -213,7 +234,7 @@ public class ShareCourseDAO {
             query.setParameter("id_course", courseCurrent.getIdcourse());
             query.setParameter("id_account_use", accountUser.getIdaccount());
             list = query.list();
-            if(list != null && list.size() > 0){
+            if (list != null && list.size() > 0) {
                 shareCourse = list.get(0);
             }
             tx.commit();
@@ -227,17 +248,16 @@ public class ShareCourseDAO {
         }
         return shareCourse;
     }
-    
+
     //user
     //update trang thai da clone khoa hoc cua nguoi dung
-    public static boolean updateStatusClone(ShareCourse shareCourse){
+    public static boolean updateStatusClone(ShareCourse shareCourse) {
         boolean result = false;
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
-            ShareCourse sc = (ShareCourse) 
-                    session.get(ShareCourse.class, shareCourse.getIdshareCourse());
+            ShareCourse sc = (ShareCourse) session.get(ShareCourse.class, shareCourse.getIdshareCourse());
             sc.setCloned(CONFIG.CONFIG_CLONED);
             session.update(sc);
             tx.commit();

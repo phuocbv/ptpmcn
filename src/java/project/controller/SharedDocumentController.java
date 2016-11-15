@@ -54,7 +54,7 @@ public class SharedDocumentController {
     public SharedDocumentController() {
         FacesContext context = FacesContext.getCurrentInstance();
         account = (Account) context.getExternalContext()
-                .getSessionMap().get(CONFIG.SESSION_NAME_OF_ADMIN);
+                .getSessionMap().get(CONFIG.SESSION_NAME_OF_USER);
         try {
             listDocument = DocumentDAO.getListDocumentSharedByDiffirentAccount(account);
             listShareFile = ShareFileDAO.getListShareFileByIdAccountUse(account);

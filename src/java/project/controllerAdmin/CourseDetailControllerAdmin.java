@@ -115,12 +115,25 @@ public class CourseDetailControllerAdmin {
         }
     }
 
-    public void deleteCourse(){
-        if(courseCurrent != null){
-            
+    public String deleteCourse() {
+        if (courseCurrent != null && shareCourse != null) {
+            boolean b1 = IndexDAO.deleteIndexByIdShareCourse(shareCourse);
+            boolean b2 = ShareCourseDAO.deleteShareCourseById(shareCourse);
+            boolean b3 = false;
+            if (b1 && b2) {
+                b3 = CourseDAO.deleteCourseById(courseCurrent.getIdcourse());
+            }
+            if (b3) {
+                FacesContext.getCurrentInstance()
+                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Xóa thành công."));
+            } else {
+                FacesContext.getCurrentInstance()
+                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Lỗi."));
+            }
         }
+        return "/admin/home.xhtml?faces-redirect=true";
     }
-    
+
     public void addIndex() {
         if (index != null && selectNode != null) {
             Index s = (Index) selectNode.getData();

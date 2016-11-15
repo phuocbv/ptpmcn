@@ -1,5 +1,6 @@
 package core.controller;
 
+import core.filter.NumRequest;
 import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -16,55 +17,57 @@ import project.dao.AccountDAO;
 @ManagedBean(name = "loginController")
 @SessionScoped
 public class LoginController {
+
     private static final String REDIRECT_TO_HOME_ADMIN = "/admin/home.xhtml?faces-redirect=true";
     private static final String REDIRECT_TO_HOME_USER = "/user/home.xhtml?faces-redirect=true";
     private static final String REDIRECT_TO_LOGIN = "/login.xhtml?faces-redirect=true";
     private static final String TO_LOGIN = "/login.xhtml";
-    
+
     private Account account;
-    private boolean loggedIn;
+    private boolean loggedIn = false;
     private boolean logInIsAdmin = false;
     private boolean logInIsUser = false;
     private Account result;
-    FacesContext context;
-    public LoginController(){
+    //FacesContext context = null;
+
+    public LoginController() {
         account = new Account();
-        context = FacesContext.getCurrentInstance();
+        //context = FacesContext.getCurrentInstance();
+        //loggedIn = false;
+        NumRequest f = new NumRequest();
+        f.start();
     }
-    
-    public String doLogin(){
-        if(account.getUsername() == ""){
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", ""));
+
+    public String doLogin() {
+        if (account.getUsername() == "") {
             return TO_LOGIN;
         }
-        if(account.getUsername() != "" && account.getPassword() != ""){
-            
+        if (account.getUsername() != "" && account.getPassword() != "") {
             result = AccountDAO.getAccountByUsername(account);
-            //Account result = AccountDAO.getAccount(account);
-            if(result == null) {
-                //context.addMessage(null, new FacesMessage("Error", "Đăng nhập không thành công"));
+            if (result == null) {
                 return TO_LOGIN;
             }
+
             loggedIn = true;
-            FacesContext context = FacesContext.getCurrentInstance();
-            context.getExternalContext().getSessionMap().put(CONFIG.SESSION_NAME_OF_ADMIN, result);
-            //context.addMessage(null, new FacesMessage("Error", "Đăng nhập thành công"));
-            if( result.getColumn1().equals("admin")){
+            if (result.getColumn1().equals("admin")) {
                 logInIsAdmin = true;
-            }else{
+                FacesContext context = FacesContext.getCurrentInstance();
+                context.getExternalContext().getSessionMap().put(CONFIG.SESSION_NAME_OF_ADMIN, result);
+            } else {
                 logInIsUser = true;
+                FacesContext context = FacesContext.getCurrentInstance();
+                context.getExternalContext().getSessionMap().put(CONFIG.SESSION_NAME_OF_USER, result);
             }
             String link = result.getColumn1().equals("admin") ? REDIRECT_TO_HOME_ADMIN : REDIRECT_TO_HOME_USER;
             return link;
         }
         loggedIn = false;
-        context.addMessage(null, new FacesMessage("Error", "Đăng nhập không thành công"));
         return TO_LOGIN;
     }
-    
-    public String doLogout(){
+
+    public String doLogout() {
         FacesContext context = FacesContext.getCurrentInstance();
-        context.getExternalContext().getSessionMap().clear(); //remove(CONFIG.SESSION_NAME_OF_ADMIN);
+        context.getExternalContext().getSessionMap().clear();
         loggedIn = false;
         return REDIRECT_TO_LOGIN;
     }
@@ -75,7 +78,7 @@ public class LoginController {
 
     public void setLoggedIn(boolean loggedIn) {
         this.loggedIn = loggedIn;
-    } 
+    }
 
     public Account getAccount() {
         return account;
@@ -108,6 +111,7 @@ public class LoginController {
     public void setResult(Account result) {
         this.result = result;
     }
-    
-    
+
+  
+
 }

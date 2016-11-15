@@ -14,6 +14,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jboss.logging.Logger;
@@ -24,46 +25,28 @@ import project.config.CONFIG;
  *
  * @author DA CUOI
  */
+@WebFilter("/user/*")
 public class LoginFilter implements Filter {
 
     /**
      * Checks if user is logged in. If not it redirects to the login.xhtml page.
      */
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-       
+        NumRequest.add_request();
         String contextPath = ((HttpServletRequest) request).getContextPath();
         String reqURI = ((HttpServletRequest) request).getRequestURI();
-
-        FacesContext context = FacesContext.getCurrentInstance();
-        Account accountAdmin = (Account) context.getExternalContext().getSessionMap().get(CONFIG.SESSION_NAME_OF_ADMIN);
-        Account accountUser = (Account) context.getExternalContext().getSessionMap().get(CONFIG.SESSION_NAME_OF_USER);
-        
-        if (accountAdmin == null && accountUser == null) {
+        Account account = null;
+        try {
+            account = (Account) ((HttpServletRequest) request).getSession().getAttribute(CONFIG.SESSION_NAME_OF_USER);
+        } catch (Exception e) {
             ((HttpServletResponse) response).sendRedirect(contextPath + "/login.xhtml");
         }
-        
-        LoginController loginBean = (LoginController) ((HttpServletRequest) request).getSession().getAttribute("loginController");
-        Account accountCurrent = loginBean.getResult();
-        if (reqURI.contains("admin") && accountCurrent.getColumn1().equals("admin")) {
-            chain.doFilter(request, response);
-        } else if (reqURI.contains("user") && accountCurrent.getColumn1().equals("user")) {
-            chain.doFilter(request, response);
+        if (account == null) {
+            ((HttpServletResponse) response).sendRedirect(contextPath + "/login.xhtml");
         } else {
-            ((HttpServletResponse) response).sendRedirect(contextPath + "/login.xhtml");
+            chain.doFilter(request, response);
         }
-        
-//        if (loginBean == null || !loginBean.isLoggedIn()) {
-//            //String contextPath = ((HttpServletRequest)request).getContextPath();
-//            ((HttpServletResponse) response).sendRedirect(contextPath + "/login.xhtml");
-//        }
-//        if (contextPath.contains("admin") && loginBean.isLogInIsUser()) {
-//            ((HttpServletResponse) response).sendRedirect(contextPath + "/login.xhtml");
-//        }
-//        if (contextPath.contains("user") && loginBean.isLogInIsAdmin()) {
-//            ((HttpServletResponse) response).sendRedirect(contextPath + "/login.xhtml");
-//        }
-        //loginBean.getAccount().getColumn1()
-        //chain.doFilter(request, response);
+
     }
 
     public void init(FilterConfig config) throws ServletException {

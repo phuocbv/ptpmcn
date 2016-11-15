@@ -33,10 +33,6 @@
             </p:panel>
 
             <p:panel styleClass="ContentDaCuoi">
-<!--                <p:outputPanel styleClass="Wid100 TexRight">
-                    <p:commandButton value="Chia sẻ khóa học"></p:commandButton>
-                </p:outputPanel>-->
-
                 <div class="EmptyBox5"></div>
                 <p:dataGrid var="course" value="#{homeController.listCourse}" columns="3" layout="grid"
                             rows="6" paginator="true" id="course" emptyMessage="Không có khóa học nào"
@@ -105,27 +101,6 @@
                         </p:panelGrid>
                     </f:facet>  
 
-                </p:dialog>
-
-                <p:dialog header="Chia sẻ khóa học" resizable="false" widgetVar="dialogShareCourse" 
-                          id="dialogShareCourse" width="500">
-                    <p:outputPanel id="panelDialogShareCourse" styleClass="Wid100" >
-                        <p:panelGrid styleClass="Wid100">
-                            <p:row>
-                                <p:column styleClass="Wid40">
-                                    <p:outputLabel value="Chọn thành viên"/>
-                                </p:column>
-                                <p:column>
-<!--                                    <p:selectCheckboxMenu styleClass="Wid100" filter="true" filterMatchMode="startsWith"
-                                                          value="#{courseDetailControllerAdmin.listIdAccountByAdminCreate}" 
-                                                          label="Chọn thành viên">
-                                        <f:selectItems itemLabel="#{item.accountName}" itemValue="#{item.idaccount}"
-                                                       value="#{accountControllerAdmin.listAccountManageByAdmin}" var="item"/>
-                                    </p:selectCheckboxMenu>-->
-                                </p:column>
-                            </p:row>
-                        </p:panelGrid>
-                    </p:outputPanel>               
                 </p:dialog>
             </p:panel>
 

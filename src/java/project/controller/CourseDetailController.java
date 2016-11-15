@@ -67,7 +67,7 @@ public class CourseDetailController {
 
     public CourseDetailController() {
         FacesContext context = FacesContext.getCurrentInstance();
-        account = (Account) context.getExternalContext().getSessionMap().get(CONFIG.SESSION_NAME_OF_ADMIN);
+        account = (Account) context.getExternalContext().getSessionMap().get(CONFIG.SESSION_NAME_OF_USER);
 
         treeUtil = new Tree();
     }

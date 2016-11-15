@@ -34,16 +34,14 @@ public class HomeController {
     private Course course;
     private Date createDate;
 
-//    SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
     SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 
     public HomeController() {
         FacesContext context = FacesContext.getCurrentInstance();
-        account = (Account) context.getExternalContext().getSessionMap().get(CONFIG.SESSION_NAME_OF_ADMIN);
+        account = (Account) context.getExternalContext().getSessionMap().get(CONFIG.SESSION_NAME_OF_USER);
         try {
             listCourse = CourseDAO.getListCourseOfMember(account);
         } catch (SQLException ex) {
-            Logger.getLogger(HomeController.class.getName()).log(Level.SEVERE, null, ex);
         }
         username = account.getUsername();
     }
@@ -63,7 +61,9 @@ public class HomeController {
     }
 
     public List<Course> getListCourse() {
-        if(listCourse == null) listCourse = new ArrayList<Course>();
+        if (listCourse == null) {
+            listCourse = new ArrayList<Course>();
+        }
         return listCourse;
     }
 

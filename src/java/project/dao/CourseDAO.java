@@ -79,6 +79,7 @@ public class CourseDAO {
             Course course = (Course) session.get(Course.class, idCourse);
             session.delete(course);
             tx.commit();
+            result = true;
         } catch (HibernateException e) {
             if (tx != null) {
                 tx.rollback();

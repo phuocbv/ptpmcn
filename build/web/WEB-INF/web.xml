@@ -6,8 +6,18 @@
     </context-param>
     
     <filter-mapping>
+        <filter-name>AdminFilter</filter-name>
+        <url-pattern>/WebApplication2/admin/*</url-pattern>
+    </filter-mapping>
+    
+    <filter>
+        <filter-name>AdminFilter</filter-name>
+        <filter-class>core.filter.AdminFilter</filter-class>
+    </filter>
+    
+    <filter-mapping>
         <filter-name>LoginFilter</filter-name>
-        <url-pattern>/WebApplication2/*</url-pattern>
+        <url-pattern>/WebApplication2/user/*</url-pattern>
     </filter-mapping>
     
     <filter>
@@ -25,16 +35,6 @@
         <servlet-name>Faces Servlet</servlet-name>
         <url-pattern>*.xhtml</url-pattern>
     </servlet-mapping>
-    
-    <!-- Login filter -->
-    
-    <!-- Set the login filter to secure all the pages in the /faces/* path of the application  -->
-    <!--    <filter-mapping>
-        <filter-name>LoginFilter</filter-name>
-        <url-pattern>/WebApplication2/*</url-pattern>
-    </filter-mapping>-->
-    
-    
     
     <session-config>
         <session-timeout>

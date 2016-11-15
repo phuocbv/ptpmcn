@@ -5,7 +5,6 @@
  */
 package core.filter;
 
-import core.controller.LoginController;
 import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -13,35 +12,43 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import project.DO.Account;
+import project.config.CONFIG;
 
 /**
  *
  * @author DA CUOI
  */
+@WebFilter("/admin/*")
 public class AdminFilter implements Filter {
- 
-   
+
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        // Get the loginBean from session attribute
-        LoginController loginBean = (LoginController)((HttpServletRequest)request).getSession().getAttribute("loginController");       
-        // For the first application request there is no loginBean in the session so user needs to log in
-        // For other requests loginBean is present but we need to check if user has logged in successfully
-        if (loginBean == null || !loginBean.isLoggedIn()) {
-            String contextPath = ((HttpServletRequest)request).getContextPath();
-            ((HttpServletResponse)response).sendRedirect(contextPath + "/login.xhtml");
-        }   
-        chain.doFilter(request, response);       
+        NumRequest.add_request();
+        String contextPath = ((HttpServletRequest) request).getContextPath();
+        String reqURI = ((HttpServletRequest) request).getRequestURI();
+        Account accountAdmin = null;
+        try {
+            accountAdmin = (Account) ((HttpServletRequest) request).getSession().getAttribute(CONFIG.SESSION_NAME_OF_ADMIN);
+        } catch (Exception e) {
+            ((HttpServletResponse) response).sendRedirect(contextPath + "/login.xhtml");
+        }
+        if (accountAdmin == null) {
+            ((HttpServletResponse) response).sendRedirect(contextPath + "/login.xhtml");
+        } else {
+            chain.doFilter(request, response);
+        }
+
     }
- 
+
     public void init(FilterConfig config) throws ServletException {
         // Nothing to do here!
     }
- 
+
     public void destroy() {
         // Nothing to do here!
-    }   
+    }
 
-     
 }

@@ -80,6 +80,31 @@ public class IndexDAO {
         return result;
     }
 
+    public static boolean deleteIndexByIdShareCourse(ShareCourse shareCourse) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+        boolean result = false;
+        try {
+            tx = session.beginTransaction();
+            Query query = session.createQuery("FROM Index WHERE id_share_course = :id_share_course");
+            query.setParameter("id_share_course", shareCourse.getIdshareCourse());
+            List<Index> list = query.list();
+            for (Index index : list) {
+                session.delete(index);
+            }
+            tx.commit();
+            result = true;
+        } catch (HibernateException e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+        return result;
+    }
+
     public static List<Index> getIndexByIdShareCourse(ShareCourse shareCourse) {
         List<Index> list = null;
         Session session = HibernateUtil.getSessionFactory().openSession();
