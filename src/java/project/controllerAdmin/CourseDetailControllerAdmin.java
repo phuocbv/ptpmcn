@@ -104,6 +104,41 @@ public class CourseDetailControllerAdmin {
         }
     }
 
+    public Index indexFromSelectElement() {
+        Index index = null;
+        if (selectNode != null) {
+            index = (Index) selectNode.getData();
+        }
+        return index;
+    }
+
+    public void editForder() {
+        if (index != null) {
+            if (index.getColumn1().equals("root")) {
+                FacesContext.getCurrentInstance()
+                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warn", "Đây là thư mục gốc.Không thể đổi được."));
+                return;
+            }
+            if (!index.getColumn1().equals("application/foder")) {
+                FacesContext.getCurrentInstance()
+                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warn", "Đây không phải thư mục.Không thể đổi được."));
+                return;
+            }
+            boolean b = IndexDAO.updateIndex(index);
+            if (b) {
+                resetTree();
+                FacesContext.getCurrentInstance()
+                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Thay đổi thành công."));
+            } else {
+                FacesContext.getCurrentInstance()
+                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Lỗi."));
+            }
+        } else {
+            FacesContext.getCurrentInstance()
+                    .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warn", "Chưa thay đổi được."));
+        }
+    }
+
     public void uploadFile(FileUploadEvent event) {
         if (file != null) {
             FileUtil fileUtil = new FileUtil();
@@ -189,9 +224,8 @@ public class CourseDetailControllerAdmin {
                 Logger.getLogger(CourseDetailControllerAdmin.class.getName()).log(Level.SEVERE, null, ex);
             }
             if (uploadFileName != null) {
-                if (index != null && index.getName() != null && file != null) {
+                if (index != null && file != null) {
                     Index select = (Index) selectNode.getData();
-                    //Index s = (Index) selectNode;
                     if (!select.getColumn1().equals("application/foder")
                             && !select.getColumn1().equals("root")) {
                         FacesContext.getCurrentInstance()
@@ -206,6 +240,7 @@ public class CourseDetailControllerAdmin {
                     index.setIdParent(select.getIdindex());
                     index.setLevel(select.getLevel() + 1);
                     index.setColumn1(fileType);
+                    index.setColumn2("0");
                     int idIndex = IndexDAO.addIndex(index);
                     if (idIndex > 0) {
                         Document f = new Document();
@@ -330,9 +365,20 @@ public class CourseDetailControllerAdmin {
                     FacesContext.getCurrentInstance()
                             .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Xóa lỗi."));
                 }
-            } else {
+            } else if (s.getColumn1().equals("application/foder")){
+                boolean b = IndexDAO.getIndexByIdParent(s);
+                if (!b){
+                    IndexDAO.deleteIndexById(s);
+                    resetTree();
+                    FacesContext.getCurrentInstance()
+                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Xóa thư mục thành công"));
+                } else{
+                    FacesContext.getCurrentInstance()
+                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warn", "Thư mục thư mục hoặc file con. Không xóa được"));
+                }
+            } else{
                 FacesContext.getCurrentInstance()
-                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warn", "Bạn không được xóa thư mục. Chỉ được sửa thư mục"));
+                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warn", "Bạn không được xóa thư mục gốc"));
             }
         }
     }
@@ -373,9 +419,24 @@ public class CourseDetailControllerAdmin {
     public void onDragDrop(TreeDragDropEvent event) {
         TreeNode dragNode = event.getDragNode();
         TreeNode dropNode = event.getDropNode();
-        //int dropIndex = event.getDropIndex();
+        Index drag = (Index) dragNode.getData();//keo
+        Index drop = (Index) dropNode.getData();//tha
+        if (drag.getColumn1().equals("root")) {
+            FacesContext.getCurrentInstance()
+                    .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warn", "Đây là thư mục gốc. Không di chuyển được"));
+        } else if (!drop.getColumn1().equals("application/foder")) {
+            FacesContext.getCurrentInstance()
+                    .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warn", "Vị trí phải nằm trong thư mục"));
+        } else if (drop.getColumn1().equals("application/foder")
+                && drop.getLevel() >= 2 && drag.getColumn1().equals("application/foder")) {
+            FacesContext.getCurrentInstance()
+                    .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warn", "Không được vì thư mục đến là thư mục bậc 3"));
+        } else {
+            
+        }
 
-        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Dragged " + dragNode.getData(), "Dropped on " + dropNode.getData() + " at ");
+        //int dropIndex = event.getDropIndex();
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Dragged " + drag.getName(), "Dropped on " + drop.getName() + " at ");
         FacesContext.getCurrentInstance().addMessage(null, message);
     }
 

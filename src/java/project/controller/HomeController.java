@@ -25,7 +25,7 @@ import project.dao.CourseDAO;
  * @author DA CUOI
  */
 @ManagedBean(name = "homeController")
-@SessionScoped
+@ViewScoped
 public class HomeController {
 
     private Account account;

@@ -28,6 +28,7 @@ import project.DO.Index;
 import project.DO.ShareCourse;
 import project.config.CONFIG;
 import project.dao.AccountDAO;
+import project.dao.CourseDAO;
 import project.dao.FileDAO;
 import project.dao.IndexDAO;
 import project.dao.ShareCourseDAO;
@@ -99,6 +100,41 @@ public class CourseDetailController {
         }
     }
 
+    public Index indexFromSelectElement() {
+        Index index = null;
+        if (selectedNode != null) {
+            index = (Index) selectedNode.getData();
+        }
+        return index;
+    }
+
+    public void editForder() {
+        if (index != null) {
+            if (index.getColumn1().equals("root")) {
+                FacesContext.getCurrentInstance()
+                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warn", "Đât là thư mục gốc.Không thể đổi được."));
+                return;
+            }
+            if (!index.getColumn1().equals("application/foder")) {
+                FacesContext.getCurrentInstance()
+                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warn", "Đât không phải thư mục.Không thể đổi được."));
+                return;
+            }
+            boolean b = IndexDAO.updateIndex(index);
+            if (b) {
+                resetTree(shareCourseCurrent);
+                FacesContext.getCurrentInstance()
+                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Thay đổi thành công."));
+            } else {
+                FacesContext.getCurrentInstance()
+                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Lỗi."));
+            }
+        } else {
+            FacesContext.getCurrentInstance()
+                    .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warn", "Chưa thay đổi được."));
+        }
+    }
+
     public void resetTree(ShareCourse shareCourse) {
         listItem = IndexDAO.getIndexByIdShareCourse(shareCourse);
         if (listItem != null && listItem.size() > 0) {
@@ -125,6 +161,25 @@ public class CourseDetailController {
                         .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Clone không thành công."));
             }
         }
+    }
+
+    public String deleteCourse() {
+        if (cloned && shareCourseCurrent != null) {
+            boolean b1 = IndexDAO.deleteIndexByIdShareCourse(shareCourseCurrent);
+            boolean b2 = ShareCourseDAO.deleteShareCourseById(shareCourseCurrent);
+            boolean b3 = false;
+            if (b1 && b2) {
+                b3 = CourseDAO.deleteCourseById(courseId);
+            }
+            if (b3) {
+                FacesContext.getCurrentInstance()
+                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Xóa thành công."));
+            } else {
+                FacesContext.getCurrentInstance()
+                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Lỗi."));
+            }
+        }
+        return "/user/home.xhtml?faces-redirect=true";
     }
 
     public void addIndex() {
@@ -228,7 +283,7 @@ public class CourseDetailController {
             } catch (IOException ex) {
             }
             if (uploadFileName != null) {
-                if (index != null && index.getName() != null && file != null) {
+                if (index != null && file != null) {
                     Index select = (Index) selectedNode.getData();
                     if (!select.getColumn1().equals("application/foder")
                             && !select.getColumn1().equals("root")) {
@@ -278,9 +333,20 @@ public class CourseDetailController {
                     FacesContext.getCurrentInstance()
                             .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Xóa lỗi."));
                 }
+            } else if (s.getColumn1().equals("application/foder")) {
+                boolean b = IndexDAO.getIndexByIdParent(s);
+                if (!b) {
+                    IndexDAO.deleteIndexById(s);
+                    resetTree(shareCourseCurrent);
+                    FacesContext.getCurrentInstance()
+                            .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Xóa thư mục thành công"));
+                } else {
+                    FacesContext.getCurrentInstance()
+                            .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warn", "Thư mục thư mục hoặc file con. Không xóa được"));
+                }
             } else {
                 FacesContext.getCurrentInstance()
-                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warn", "Bạn không được xóa thư mục. Chỉ được sửa thư mục"));
+                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warn", "Bạn không được xóa thư mục gốc"));
             }
         }
     }

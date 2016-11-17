@@ -215,7 +215,6 @@ public class MyDocumentControllerAdmin {
     public List<Account> listAccountNotShareFile() {
         List<Account> list = null;
         if (selectedDocument != null) {
-            //list = AccountDAO.getListAccountNotShareFile(account, selectedDocument);
             list = AccountDAO.getAllAccount(account);
         }
         return list;

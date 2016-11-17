@@ -74,9 +74,8 @@
                             <p:outputPanel styleClass="Wid100" style="height:550px" >
                                 <p:tree id="tree" value="#{courseDetailControllerAdmin.root}" var="node" 
                                         selectionMode="single" selection="#{courseDetailControllerAdmin.selectNode}"
-                                        draggable="true" droppable="true" 
+                                        draggable="false" droppable="false" 
                                         style="width: 100% !important; height: 550px !important; overflow: auto;">
-                                    <p:ajax event="dragdrop"  onstart="PF('dialogConfirm').show()"/>
                                     <p:treeNode>
                                         <h:outputText value="#{node.name}" />
                                     </p:treeNode>
@@ -100,11 +99,14 @@
 
                                     <p:menuitem value="Xem chi tiết" actionListener="#{courseDetailControllerAdmin.viewFile()}" 
                                                 update=":form:panel"/>
+                                    <p:menuitem value="Sửa tên thư mục" 
+                                                oncomplete="PF('dialogEditForder').show()" 
+                                                update=":formDialogEditForder:panelDialogEditForder">
+                                        <f:setPropertyActionListener target="#{courseDetailControllerAdmin.index}"
+                                                                     value="#{courseDetailControllerAdmin.indexFromSelectElement()}"/>
+                                    </p:menuitem>
                                     <p:menuitem value="Tải xuống" actionListener="#{courseDetailControllerAdmin.downloadFile()}"/>
                                     <p:menuitem value="Chia sẻ file"/>
-                                    <p:menuitem value="Tải xuống" ajax="false" > <!--onclick="PrimeFaces.monitorDownload(start, stop);"-->
-                                        <p:fileDownload value="#{fileDownloadView.file}" />                         
-                                    </p:menuitem>
                                     <p:menuitem value="Xóa" oncomplete="PF('dialogConfirmDelete').show()"/>
                                 </p:contextMenu>
                             </p:outputPanel>
@@ -161,7 +163,7 @@
                     <p:commandButton value="Xóa khóa học" action="#{courseDetailControllerAdmin.deleteCourse()}">
                         <p:confirm header="Xác thực" message="Bạn có chắc chắn xóa khóa học?" icon="ui-icon-alert"/>
                     </p:commandButton>
-                  
+
                     <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
                         <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
                         <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
@@ -179,7 +181,6 @@
                             <p:row>
                                 <p:column styleClass="Wid50">
                                     <p:commandButton value="Yes"  oncomplete="PF('dialogConfirm').hide()"
-                                                     actionListener="#{myDocumentControllerAdmin.deleteDocument()}"
                                                      update=":form:tree"></p:commandButton>
                                 </p:column>
                                 <p:column styleClass="Wid50">
@@ -232,6 +233,36 @@
             </p:dialog>
         </h:form>
 
+        <!-- form edit forder -->
+        <h:form id="formDialogEditForder">
+            <p:dialog id="dialogEditForder" resizable="false" width="500" header="Thêm thư mục" widgetVar="dialogEditForder">
+                <p:outputPanel id="panelDialogEditForder" styleClass="Wid100">
+                    <p:panelGrid styleClass="Wid100">
+                        <p:row>
+                            <p:column styleClass="Wid40">
+                                <p:outputLabel value="Tên thư mục"></p:outputLabel>
+                            </p:column>
+                            <p:column>
+                                <p:inputText value="#{courseDetailControllerAdmin.index.name}"/>                              
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>   
+                </p:outputPanel>
+                <f:facet name="footer" >
+                    <p:outputPanel styleClass="Wid100 TexRight">
+
+                        <p:commandButton value="Sửa" oncomplete="PF('dialogEditForder').hide()"
+                                         actionListener="#{courseDetailControllerAdmin.editForder()}"
+                                         update=":form:tree, :formDialogEditForder:panelDialogEditForder">
+                            <p:resetInput target=":formDialogEditForder:dialogEditForder"/>
+                            <f:setPropertyActionListener value="#{courseDetailControllerAdmin.resetIndex()}" 
+                                                         target="#{courseDetailControllerAdmin.index}"/>          
+                        </p:commandButton>
+                    </p:outputPanel>
+                </f:facet>
+            </p:dialog>
+        </h:form>
+
         <!-- form add file into forder -->
         <h:form id="formDialogAddFile" enctype="multipart/form-data">
             <p:dialog id="dialogAddFile" widgetVar="dialogAddFile" resizable="false" width="500" header="Thêm file">                     
@@ -243,24 +274,6 @@
                             </p:column>
                             <p:column styleClass="Wid60">
                                 <p:outputLabel value="#{courseDetailControllerAdmin.selectNode.data.name}"/>
-                            </p:column>
-                        </p:row>
-                        <p:row>
-                            <p:column styleClass="Wid40">
-                                <p:outputLabel value="Chọn tên file"></p:outputLabel>
-                            </p:column>
-                            <p:column styleClass="Wid60">
-                                <p:inputText id="indexName" styleClass="Wid100" value="#{courseDetailControllerAdmin.index.name}" required="true"
-                                             requiredMessage="Không được để trống"></p:inputText>
-                            </p:column>
-                        </p:row>
-
-                        <p:row>
-                            <p:column styleClass="Wid40">
-
-                            </p:column>
-                            <p:column>
-                                <p:message for="indexName"/>
                             </p:column>
                         </p:row>
 

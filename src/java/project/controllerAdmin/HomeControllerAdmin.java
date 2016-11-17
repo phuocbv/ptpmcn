@@ -31,7 +31,7 @@ import project.dao.ShareCourseDAO;
  * @author DA CUOI
  */
 @ManagedBean(name = "homeControllerAdmin")
-@SessionScoped
+@ViewScoped
 public class HomeControllerAdmin {
 
     List<Course> listCourseByAdminCreate;
