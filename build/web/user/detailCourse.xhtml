@@ -40,9 +40,10 @@
 
                 <p:outputPanel id="clone" styleClass="Wid100 TexRight">
                     <p:commandButton id="btnClone" value="Clone khóa học" disabled="#{courseDetailController.cloned}"
-                                     update=" :form:clone , :form:tree, :form:contextMenu" 
+                                     update=" :form:clone , :form:tree, :form:contextMenu, :form:btnDelete" 
                                      actionListener="#{courseDetailController.cloneCourse()}">
-
+                        <p:confirm header="Xác thực" message="Bạn có chắc chắn muốn clone khóa học. 
+                                   Khi clone về khóa học là của bạn, bạn có thể thay đổi cấu trúc nó" icon="ui-icon-alert"/>
                     </p:commandButton>
 
                 </p:outputPanel>
@@ -61,7 +62,7 @@
                         <p:column styleClass="Wid30" >
                             <p:tree id="tree" value="#{courseDetailController.root}" var="node" 
                                     selectionMode="single" selection="#{courseDetailController.selectedNode}"
-                                    draggable="#{courseDetailController.cloned}" droppable="#{courseDetailController.cloned}" 
+                                    draggable="false" droppable="false" 
                                     style="width: 100% !important; height: 550px; overflow: auto">
 
                                 <p:treeNode>
@@ -87,12 +88,23 @@
                                                                  target="#{courseDetailController.file}"/>
                                     <p:resetInput target=":formDialogAddFile:dialogAddFile"/>
                                 </p:menuitem>
+
                                 <p:menuitem value="Xem chi tiết"
                                             actionListener="#{courseDetailController.viewFile()}"
                                             update=":form:panel"/>
-                                <p:menuitem value="Tải xuống" actionListener="#{courseDetailController.downloadFile()}"/>
-                                
-                                <p:menuitem value="Chia sẻ file"/>
+                                <p:menuitem value="Tải xuống" 
+                                            rendered="#{courseDetailController.cloned}"
+                                            actionListener="#{courseDetailController.downloadFile()}"/>
+
+                                <p:menuitem value="Sửa tên thư mục" rendered="#{courseDetailController.cloned}"
+                                            oncomplete="PF('dialogEditForder').show()" 
+                                            update=":formDialogEditForder:panelDialogEditForder">
+                                    <f:setPropertyActionListener target="#{courseDetailController.index}"
+                                                                 value="#{courseDetailController.indexFromSelectElement()}"/>
+                                </p:menuitem>
+
+                                <p:menuitem value="Chia sẻ file" rendered="#{courseDetailController.cloned}"/>
+
                                 <p:menuitem value="Xóa" oncomplete="PF('dialogConfirmDelete').show()"
                                             rendered="#{courseDetailController.cloned}"/>
                             </p:contextMenu>
@@ -145,6 +157,20 @@
                         </p:column>
                     </p:row>
                 </p:panelGrid>
+
+                <div class="EmptyBox5"></div>
+                <p:outputPanel styleClass="Wid100 TexRight" id="btnDelete">
+                    <p:commandButton value="Xóa khóa học" 
+                                     action="#{courseDetailController.deleteCourse()}" 
+                                     rendered="#{courseDetailController.cloned}">
+                        <p:confirm header="Xác thực" message="Bạn có chắc chắn xóa khóa học?" icon="ui-icon-alert"/>
+                    </p:commandButton>
+
+                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                        <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                    </p:confirmDialog>
+                </p:outputPanel>
             </h:form>
         </p:panel>
 
@@ -217,6 +243,35 @@
             </p:dialog>
         </h:form>
 
+        <!-- form edit forder -->
+        <h:form id="formDialogEditForder">
+            <p:dialog id="dialogEditForder" resizable="false" width="500" header="Thêm thư mục" widgetVar="dialogEditForder">
+                <p:outputPanel id="panelDialogEditForder" styleClass="Wid100">
+                    <p:panelGrid styleClass="Wid100">
+                        <p:row>
+                            <p:column styleClass="Wid40">
+                                <p:outputLabel value="Tên thư mục"></p:outputLabel>
+                            </p:column>
+                            <p:column>
+                                <p:inputText value="#{courseDetailControllerAdmin.index.name}"/>                              
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>   
+                </p:outputPanel>
+                <f:facet name="footer" >
+                    <p:outputPanel styleClass="Wid100 TexRight">
+
+                        <p:commandButton value="Sửa" oncomplete="PF('dialogEditForder').hide()"
+                                         actionListener="#{courseDetailControllerAdmin.editForder()}"
+                                         update=":form:tree, :formDialogEditForder:panelDialogEditForder">
+                            <p:resetInput target=":formDialogEditForder:dialogEditForder"/>
+                            <f:setPropertyActionListener value="#{courseDetailController.resetIndex()}" 
+                                                         target="#{courseDetailController.index}"/>          
+                        </p:commandButton>
+                    </p:outputPanel>
+                </f:facet>
+            </p:dialog>
+        </h:form>
 
         <!-- form add file into forder -->
         <h:form id="formDialogAddFile" enctype="multipart/form-data">
@@ -229,15 +284,6 @@
                             </p:column>
                             <p:column styleClass="Wid60">
                                 <p:outputLabel value="#{courseDetailController.selectedNode.data.name}"/>
-                            </p:column>
-                        </p:row>
-                        <p:row>
-                            <p:column styleClass="Wid40">
-                                <p:outputLabel value="Chọn tên file"></p:outputLabel>
-                            </p:column>
-                            <p:column styleClass="Wid60">
-                                <p:inputText id="indexName" styleClass="Wid100" value="#{courseDetailController.index.name}" required="true"
-                                             requiredMessage="Không được để trống"></p:inputText>
                             </p:column>
                         </p:row>
                         <p:row>

@@ -59,13 +59,37 @@ public class IndexDAO {
         return result;
     }
 
+    public static boolean updateIndex(Index index) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+        boolean result = false;
+        try {
+            tx = session.beginTransaction();
+            Index ind
+                    = (Index) session.get(Index.class, index.getIdindex());
+            ind.setName(index.getName());
+            session.update(ind);
+            tx.commit();
+            result = true;
+        } catch (HibernateException e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+        return result;
+    }
+
     public static boolean deleteIndexById(Index index) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction tx = null;
         boolean result = false;
         try {
             tx = session.beginTransaction();
-            Index ind = (Index) session.get(Index.class, index.getIdindex());
+            Index ind = (Index) session.get(Index.class,
+                    index.getIdindex());
             session.delete(ind);
             tx.commit();
             result = true;
@@ -94,6 +118,34 @@ public class IndexDAO {
             }
             tx.commit();
             result = true;
+        } catch (HibernateException e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+        return result;
+    }
+
+    public static boolean getIndexByIdParent(Index index) {
+        List<Index> list = null;
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+        boolean result = false;
+        try {
+            tx = session.beginTransaction();
+            Query query = session.createQuery("FROM Index WHERE id_parent = :id_parent");
+            query.setParameter("id_parent", index.getIdindex());
+            list = query.list();
+            tx.commit();
+            if (list != null && list.size() > 0) result = true;
+        } catch (NullPointerException e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
         } catch (HibernateException e) {
             if (tx != null) {
                 tx.rollback();

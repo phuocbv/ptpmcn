@@ -124,28 +124,6 @@ public class MyDocumentController {
         }
     }
 
-//    public List<Account> getAllAccount() {
-//        return AccountDAO.getAllAccount();
-//    }
-//    public void viewFile() {
-//        if (selectedDocument != null) {
-//            FileUtil fileUtil = new FileUtil();
-//            urlFile = fileUtil.getLinkFile(selectedDocument.getSrc());
-//            System.out.println(selectedDocument.getType().split("[/]")[0]);
-//            switch (selectedDocument.getType().split("[/]")[0]) {
-//                case "video":
-//                    typeFile = "flash";
-//                    break;
-//                case "image":
-//                    typeFile = "flash";
-//                    break;
-//                case "application":
-//                    typeFile = "pdf";
-//                    break;
-//            }
-//
-//        }
-//    }
     public void viewFile() {
         if (selectedDocument != null) {
             urlFile = fileUtil.getLinkFile(selectedDocument.getSrc());
@@ -180,9 +158,8 @@ public class MyDocumentController {
 
     public void deleteDocument() {
         if (selectedDocument != null) {
-            boolean b = DocumentDAO.deleteDocument(selectedDocument);
+            boolean b = ShareFileDAO.deleteShareFile(selectedDocument, account);
             if (b) {
-                ShareFileDAO.deleteShareFile(selectedDocument, account);
                 try {
                     listDocument = DocumentDAO.getListDocumentOfUser(account);
                 } catch (SQLException ex) {
@@ -219,11 +196,7 @@ public class MyDocumentController {
     public List<Account> listAccountNotShareFile() {
         List<Account> list = null;
         if (selectedDocument != null) {
-            try {
-                list = AccountDAO.getListAccountNotShareFile(account, selectedDocument);
-            } catch (SQLException ex) {
-                Logger.getLogger(MyDocumentController.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            list = AccountDAO.getAllAccount(account);
         }
         return list;
     }
