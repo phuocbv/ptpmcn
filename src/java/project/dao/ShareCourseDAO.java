@@ -105,7 +105,7 @@ public class ShareCourseDAO {
         return result;
     }
 
-    public static boolean insertMemberInCourse(List<String> listAccount, Account accountCreate, Course course) {
+    public static boolean insertMemberInCourse(List<String> listAccount, Account accountCreate, Course course, ShareCourse sc) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction tx = null;
         boolean result = false;
@@ -118,6 +118,7 @@ public class ShareCourseDAO {
                 shareCourse.setIdAccountShare(0);
                 shareCourse.setIdAccountCreate(accountCreate.getIdaccount());
                 shareCourse.setCloned(CONFIG.CONFIG_NOT_CLONE);
+                shareCourse.setColumn1(String.valueOf(sc.getIdshareCourse()));
                 session.save(shareCourse);
             }
             tx.commit();

@@ -19,15 +19,18 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.Part;
+import org.primefaces.event.TreeDragDropEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 import project.DO.Account;
+import project.DO.CommentCourse;
 import project.DO.Course;
 import project.DO.Document;
 import project.DO.Index;
 import project.DO.ShareCourse;
 import project.config.CONFIG;
 import project.dao.AccountDAO;
+import project.dao.CommentCourseDAO;
 import project.dao.CourseDAO;
 import project.dao.FileDAO;
 import project.dao.IndexDAO;
@@ -57,6 +60,8 @@ public class CourseDetailController {
     private List<String> listIdMemberNotShareCouse;
     private ShareCourse shareCourseCurrent;
     private List<Index> listItem;
+    private List<CommentCourse> listGoodCommentCourse;
+    private List<CommentCourse> listNotGoodCommentCourse;
     private boolean video = false;
     private boolean mp3 = false;
     private boolean editor = false;
@@ -64,6 +69,7 @@ public class CourseDetailController {
     private boolean image = false;
     private String nameApp = "/WebApplication2";
     private Index index;
+    private String content;
     SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 
     public CourseDetailController() {
@@ -71,6 +77,7 @@ public class CourseDetailController {
         account = (Account) context.getExternalContext().getSessionMap().get(CONFIG.SESSION_NAME_OF_USER);
 
         treeUtil = new Tree();
+
     }
 
     public int getCourseId() {
@@ -81,8 +88,6 @@ public class CourseDetailController {
         this.courseId = courseId;
         if (courseId > 0) {
             shareCourseCurrent = ShareCourseDAO.getShareCourseByIdAccountAndIdCourse(account.getIdaccount(), courseId);
-
-            //cloned = shareCourseCurrent.getCloned().equals("yes") ? true : false;
             if (shareCourseCurrent.getCloned().equals(CONFIG.CONFIG_CLONED)) {
                 resetTree(shareCourseCurrent);
                 cloned = true;
@@ -92,11 +97,15 @@ public class CourseDetailController {
                 cloned = false;
                 resetTree(shareCourse);
             }
-
+            listGoodCommentCourse = CommentCourseDAO
+                    .getCommentCourseByAccountAndShareCourse(shareCourseCurrent, CONFIG.STATE_GOOT);
+            listNotGoodCommentCourse = CommentCourseDAO
+                    .getCommentCourseByAccountAndShareCourse(shareCourseCurrent, CONFIG.STATE_NOT_GOOT);
             Account account = new Account();
             account.setIdaccount(shareCourseCurrent.getIdAccountCreate());
             Course course = new Course();
             course.setIdcourse(shareCourseCurrent.getIdCourse());
+
         }
     }
 
@@ -106,6 +115,36 @@ public class CourseDetailController {
             index = (Index) selectedNode.getData();
         }
         return index;
+    }
+
+    public String returnAccountById(int idAccount) {
+        if (idAccount == account.getIdaccount()) {
+            return "Tôi";
+        }
+        return AccountDAO.getAccountById(idAccount).getUsername();
+    }
+
+    public void addCommentCourse() {
+        if (!content.equals("")) {
+            SimpleDateFormat dt = new SimpleDateFormat("yyyyy-mm-dd hh:mm:ss");
+            CommentCourse cc = new CommentCourse();
+            cc.setContent(content);
+            cc.setIdShareCreate(Integer.parseInt(shareCourseCurrent.getColumn1()));
+            cc.setIdAccount(account.getIdaccount());
+            cc.setCreateDate(dt.format(new Date()));
+            cc.setColumn1(CONFIG.STATE_GOOT);
+            int result = CommentCourseDAO.addCommentCourse(cc);
+            if (result > 0) {
+                content = "";
+                listGoodCommentCourse = CommentCourseDAO
+                        .getCommentCourseByAccountAndShareCourse(shareCourseCurrent, CONFIG.STATE_GOOT);
+                FacesContext.getCurrentInstance()
+                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Bình luận thành công."));
+            } else {
+                FacesContext.getCurrentInstance()
+                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Lỗi."));
+            }
+        }
     }
 
     public void editForder() {
@@ -161,6 +200,32 @@ public class CourseDetailController {
                         .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Clone không thành công."));
             }
         }
+    }
+
+    public void onDragDrop(TreeDragDropEvent event) {
+        TreeNode dragNode = event.getDragNode();
+        TreeNode dropNode = event.getDropNode();
+        Index drag = (Index) dragNode.getData();//keo
+        Index drop = (Index) dropNode.getData();//tha
+        if (drag.getColumn1().equals("application/foder")
+                || drag.getColumn1().equals("root")) {
+            FacesContext.getCurrentInstance()
+                    .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warn", "Đây là thư mục. Không thay đổi được."));
+        } else if (!drop.getColumn1().equals("application/foder")
+                && !drop.getColumn1().equals("root")) {
+            FacesContext.getCurrentInstance()
+                    .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warn", "Vị trí phải nằm trong thư mục"));
+        } else {
+            boolean b = IndexDAO.changeIndex(drag, drop);
+            if (b) {
+                FacesContext.getCurrentInstance()
+                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Thay đổi thành công."));
+            } else {
+                FacesContext.getCurrentInstance()
+                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Lỗi."));
+            }
+        }
+        resetTree(shareCourseCurrent);
     }
 
     public String deleteCourse() {
@@ -528,5 +593,29 @@ public class CourseDetailController {
 
     public void setUploadFileName(String uploadFileName) {
         this.uploadFileName = uploadFileName;
+    }
+
+    public List<CommentCourse> getListGoodCommentCourse() {
+        return listGoodCommentCourse;
+    }
+
+    public void setListGoodCommentCourse(List<CommentCourse> listGoodCommentCourse) {
+        this.listGoodCommentCourse = listGoodCommentCourse;
+    }
+
+    public List<CommentCourse> getListNotGoodCommentCourse() {
+        return listNotGoodCommentCourse;
+    }
+
+    public void setListNotGoodCommentCourse(List<CommentCourse> listNotGoodCommentCourse) {
+        this.listNotGoodCommentCourse = listNotGoodCommentCourse;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 }

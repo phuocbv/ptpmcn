@@ -77,6 +77,7 @@ public class HomeControllerAdmin {
                 index.setIdParent(0);
                 index.setLevel(0);
                 index.setColumn1("root");
+                index.setColumn2("0");
                 int idIndex = IndexDAO.addIndex(index);
                 
                 index.setIdindex(idIndex);
