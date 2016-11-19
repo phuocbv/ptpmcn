@@ -64,4 +64,14 @@ public class SQL {
             + " AND S_C.id_account_share = ? "
             + " AND S_C.id_account_share <> S_C.id_account_use "
             + " ) ";
+    
+     public static final String GET_LIST_ACCOUNT_IN_COURSE = "SELECT * "
+            + " FROM mydb.account A "
+            + " WHERE A.idaccount IN "
+            + " ( "
+            + " SELECT S_C.id_account_use "
+            + " FROM mydb.share_course S_C "
+            + " WHERE S_C.id_course = ? "
+            + " AND S_C.id_account_use <> S_C.id_account_create "
+            + " ) ";
 }

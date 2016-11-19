@@ -5,12 +5,79 @@ To change this template file, choose Tools | Templates
 and open the template in the editor.
 -->
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <title>TODO supply a title</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:body>
+        <h:form>
+            <div class="EmptyBox20"></div>
+            <p:outputLabel value="Bình luận về bài học"/>
+            <p:outputPanel id="writeCommentFile">
+                <p:panelGrid>
+                    <p:row>
+                        <p:column style="width: 50%">
+                            <p:inputTextarea styleClass="Wid100" value="#{courseDetailControllerAdmin.content_file}"></p:inputTextarea>
+                        </p:column>
+
+                        <p:column style="width: 20%">
+                            <p:selectOneMenu value="#{courseDetailControllerAdmin.selectTypeCommentFile}">
+                                <f:selectItem itemLabel="Bình luận tốt" itemValue="1" />
+                                <f:selectItem itemLabel="Bình luận không tốt" itemValue="2" />
+                            </p:selectOneMenu>
+                        </p:column>
+
+                        <p:column style="width: 20%">
+                            <p:commandButton value="Bình luận" 
+                                             actionListener="#{courseDetailControllerAdmin.addCommentFile()}"
+                                             update=":form:commentFile, :form:writeCommentFile"></p:commandButton>
+
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:outputPanel>
+
+            <p:outputPanel id="commentFile">
+                <p:tabView>
+                    <p:tab title="Bình luận tốt">
+                        <ui:repeat value="#{courseDetailControllerAdmin.listGoodCommentFile}" var="comment">
+                            <p:fieldset legend="#{courseDetailControllerAdmin.returnAccountById(comment.idAccount)}" style="margin-bottom:20px">
+                                <h:panelGrid columns="1" cellpadding="5">
+                                    <h:outputText value="#{comment.content}" />
+                                    <p:row>
+                                        <p:column styleClass="Wid100 TexRight">
+                                            <p:commandButton value="Xóa" update=":form:commentFile"
+                                                             action="#{courseDetailControllerAdmin.deleteComment()}">
+                                                <f:setPropertyActionListener target="#{courseDetailControllerAdmin.selectedCommentFile}"
+                                                                             value="#{comment}"/>
+                                            </p:commandButton>
+                                        </p:column>
+                                    </p:row>
+                                </h:panelGrid>
+                            </p:fieldset>
+                        </ui:repeat>
+                    </p:tab>
+                    <p:tab title="Bình luận không tốt">
+                        <ui:repeat value="#{courseDetailControllerAdmin.listNotGoodCommentFile}" var="comment">
+                            <p:fieldset legend="#{courseDetailControllerAdmin.returnAccountById(comment.idAccount)}" style="margin-bottom:20px">
+                                <h:panelGrid columns="1" cellpadding="5">
+                                    <h:outputText value="#{comment.content}" />
+                                    <p:row>
+                                        <p:column styleClass="Wid100 TexRight">
+                                            <p:commandButton value="Xóa" update=":form:commentFile"
+                                                             action="#{courseDetailControllerAdmin.deleteComment()}">
+                                                <f:setPropertyActionListener target="#{courseDetailControllerAdmin.selectedCommentFile}"
+                                                                             value="#{comment}"/>
+                                            </p:commandButton>
+                                        </p:column>
+                                    </p:row>
+                                </h:panelGrid>
+                            </p:fieldset>
+                        </ui:repeat>
+                    </p:tab>
+                </p:tabView>
+            </p:outputPanel>
+        </h:form> 
+    </h:body>
 </html>

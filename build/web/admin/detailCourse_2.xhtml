@@ -108,7 +108,6 @@
                                                                      value="#{courseDetailControllerAdmin.indexFromSelectElement()}"/>
                                     </p:menuitem>
                                     <p:menuitem value="Tải xuống" actionListener="#{courseDetailControllerAdmin.downloadFile()}"/>
-                                    <p:menuitem value="Chia sẻ file"/>
                                     <p:menuitem value="Xóa" oncomplete="PF('dialogConfirmDelete').show()"/>
                                 </p:contextMenu>
                             </p:outputPanel>
@@ -122,6 +121,7 @@
                                     <p:editor value="#{courseDetailControllerAdmin.urlFile}"
                                               styleClass="Wid100" height="500">
                                     </p:editor>
+<!--                                    <ui:include  src="commentFile.xhtml"/>-->
                                 </p:outputPanel>
                                 <!-- /office -->
 
@@ -129,6 +129,7 @@
                                 <p:outputPanel rendered="#{courseDetailControllerAdmin.pdf}">
                                     <p:media value="#{courseDetailControllerAdmin.urlFile}" styleClass="Wid100"
                                              height="500" player="pdf" />
+<!--                                    <ui:include  src="commentFile.xhtml"/>-->
                                 </p:outputPanel>
                                 <!-- /pdf -->
 
@@ -145,6 +146,7 @@
                                            style="margin: 0 auto; display: block;height: 450px;overflow: auto">
                                         <source src="#{courseDetailControllerAdmin.urlFile}" type="video/mp4" />
                                     </video>
+<!--                                    <ui:include  src="commentFile.xhtml"/>-->
                                 </p:outputPanel>
                                 <!-- /video -->
 
@@ -154,6 +156,7 @@
                                              height="100" player="quicktime">
                                         <f:param name="autoPlay" value="false" />
                                     </p:media>
+<!--                                    <ui:include  src="commentFile.xhtml"/>-->
                                 </p:outputPanel>
                                 <!-- /mp3 -->
                             </p:panel>

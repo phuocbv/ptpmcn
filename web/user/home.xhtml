@@ -50,7 +50,9 @@
                                 <f:param name="courseId" value="#{course.idcourse}" />
                             </p:link>
                             <p:outputLabel value="Ngày tạo #{course.createDate}"/>
-                            
+                            <p:link outcome="memberInCourse" value="Thành viên khóa học">
+                                <f:param name="courseIdCurrent" value="#{course.idcourse}" />
+                            </p:link>
                         </h:panelGrid>
                     </p:panel>
 

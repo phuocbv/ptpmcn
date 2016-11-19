@@ -63,16 +63,26 @@ public class AccountControllerAdmin {
                 if (idAccountInfo > 0) {
                     listAccountCreatedByAdmin.add(accountSelected);
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Thêm thành công."));
-                }
-                else{
+                } else {
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Thêm không thành công."));
                 }
             } else {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Thêm không thành công."));
             }
-        }
-        else{
+        } else {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Thông tin chưa đầy đủ."));
+        }
+    }
+
+    public void deleteAccount() {
+        if (accountSelectInDataTable != null) {
+            boolean b = AccountDAO.deleteAccountById(accountSelectInDataTable.getIdaccount());
+            if (b) {
+                listAccountCreatedByAdmin = AccountDAO.getListAccountCreatedByAdmin(account);
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Xóa thành công."));
+            } else {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Xóa không thành công."));
+            }
         }
     }
 

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <h:head>
+        <title>My document</title>
+    </h:head>
+    <h:body style="margin: 0px">
+        <h:outputStylesheet library="css" name="theme_3.css"/>
+        <h:outputStylesheet library="css" name="style.css"/>
+
+        <p:growl id="growl" showDetail="true" life="3000" autoUpdate="true" /> 
+
+        <p:panel styleClass="HeaderDaCuoi">
+            <ui:include src="../template/header.xhtml"/>
+        </p:panel>
+        <p:panel id="panel" styleClass="MenuDaCuoi">
+            <ui:include src="../template/menu_user.xhtml"/>
+        </p:panel>
+
+        <p:panel  styleClass="FooterDaCuoi">
+            <ui:include src="../template/footer.xhtml"/>
+        </p:panel>
+
+        <p:panel  styleClass="ContentDaCuoi">
+
+            <h:form id="formMyDocument">
+
+                <f:metadata>
+                    <f:viewParam name="courseIdCurrent" value="#{memberControllerUser.courseIdCurrent}" />
+                </f:metadata>
+                <p:outputPanel styleClass="">
+                    <p:dataTable id="documents" var="member" value="#{memberControllerUser.listAccountInCourse}" 
+                                 rowKey="#{member.idaccount}"
+                                 selection="#{memberControllerUser.selectedAccount}" selectionMode="single"
+                                 rows="10" paginator="true"
+                                 paginatorTemplate="{CurrentPageReport} {PreviousPageLink} {PageLinks} {NextPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="5, 10, 15"
+                                 paginatorPosition="bottom">
+                        <f:facet name="header">
+                            Danh sách thành viên khóa học
+                        </f:facet>
+
+                        <p:column styleClass="Wid40" headerText="Tên người dùng">
+                            <h:outputText value="#{member.accountName}" />
+
+                        </p:column>
+                        <p:column styleClass="Wid20" headerText="Tên tài khoản">
+                            <h:outputText value="#{member.username}" />
+                        </p:column>
+                        <p:column styleClass="Wid20" headerText="Ngày tạo">
+                            <h:outputText value="#{member.createDate}" />
+                        </p:column>
+                    </p:dataTable> 
+                </p:outputPanel>
+            </h:form>
+        </p:panel>
+    </h:body>
+</html>

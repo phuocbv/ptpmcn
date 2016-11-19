@@ -29,6 +29,7 @@ import org.primefaces.model.TreeNode;
 import org.primefaces.model.UploadedFile;
 import project.DO.Account;
 import project.DO.CommentCourse;
+import project.DO.CommentFile;
 import project.DO.Course;
 import project.DO.Document;
 import project.DO.Index;
@@ -37,6 +38,7 @@ import project.config.CONFIG;
 import project.controller.CourseDetailController;
 import project.dao.AccountDAO;
 import project.dao.CommentCourseDAO;
+import project.dao.CommentFileDAO;
 import project.dao.CourseDAO;
 import project.dao.FileDAO;
 import project.dao.IndexDAO;
@@ -73,12 +75,17 @@ public class CourseDetailControllerAdmin {
     private boolean pdf = false;
     private boolean image = false;
     private String content = "";
+    private String content_file = "";
     private boolean myComment = false;
     private CommentCourse selectedCommentCourse;
+    private CommentFile selectedCommentFile;
     private List<CommentCourse> listGoodCommentCourse;
     private List<CommentCourse> listNotGoodCommentCourse;
+    private List<CommentFile> listGoodCommentFile;
+    private List<CommentFile> listNotGoodCommentFile;
     private String nameApp = "/WebApplication2";
     private String selectTypeComment = "1";
+    private String selectTypeCommentFile = "1";
 
     private List<String> listIdAccountByAdminCreate;
     private List<String> listIdAccountAttendedNotShared;
@@ -87,6 +94,7 @@ public class CourseDetailControllerAdmin {
 
     SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
     private String STATE_CURRENT = "";
+    private String STATE_CURRENT_FILE = "";
 
     public CourseDetailControllerAdmin() {
         FacesContext context = FacesContext.getCurrentInstance();
@@ -98,6 +106,7 @@ public class CourseDetailControllerAdmin {
         listIdAccountByAdminCreate = new ArrayList<>();
         listIdAccountAttendedNotShared = new ArrayList<>();
         selectedCommentCourse = new CommentCourse();
+        selectedCommentFile = new CommentFile();
     }
 
     public int getCourseIdCurrent() {
@@ -166,12 +175,64 @@ public class CourseDetailControllerAdmin {
             }
         }
     }
+    
+     public void addCommentFile() {
+        System.out.print("vao");
+        if (!content_file.equals("") && selectNode != null) {
+            System.out.print("in");
+            Index indexData = (Index) selectNode.getData();
+            if (selectTypeCommentFile.equals("1")) {
+                STATE_CURRENT_FILE = CONFIG.STATE_GOOT_FILE;
+            } else {
+                STATE_CURRENT_FILE = CONFIG.STATE_NOT_GOOT_FILE;
+            }
+            SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            CommentFile cc = new CommentFile();
+            cc.setContent(content_file);
+            cc.setIdFile(indexData.getIdindex());
+            cc.setIdAccount(account.getIdaccount());
+            cc.setCreateDate(dt.format(new Date()));
+            cc.setColumn1(STATE_CURRENT_FILE);
+            int result = CommentFileDAO.addCommentFile(cc);
+            if (result > 0) {
+                content_file = "";
+                listGoodCommentFile = CommentFileDAO
+                        .getCommentFileByIndex(indexData.getIdindex(), CONFIG.STATE_GOOT_FILE);
+                listNotGoodCommentFile = CommentFileDAO
+                        .getCommentFileByIndex(indexData.getIdindex(), CONFIG.STATE_NOT_GOOT_FILE);
+                FacesContext.getCurrentInstance()
+                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Bình luận thành công."));
+            } else {
+                FacesContext.getCurrentInstance()
+                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Lỗi."));
+            }
+        }
+    }
 
     public void deleteComment() {
         System.out.print("vao");
         System.out.println(selectedCommentCourse.getIdcommentCourse());
         if (selectedCommentCourse != null) {
             boolean b = CommentCourseDAO.deleteCommentCourseById(selectedCommentCourse);
+            if (b) {
+                listGoodCommentCourse = CommentCourseDAO
+                        .getCommentCourseByAccountAndShareCourse(shareCourse, CONFIG.STATE_GOOT);
+                listNotGoodCommentCourse = CommentCourseDAO
+                        .getCommentCourseByAccountAndShareCourse(shareCourse, CONFIG.STATE_NOT_GOOT);
+                FacesContext.getCurrentInstance()
+                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Xóa thành công."));
+            } else {
+                FacesContext.getCurrentInstance()
+                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Lỗi."));
+            }
+        }
+    }
+    
+    public void deleteCommentFile() {
+        System.out.print("vao");
+        
+        if (selectedCommentFile != null) {
+            boolean b = CommentFileDAO.deleteCommentFileById(selectedCommentFile);
             if (b) {
                 listGoodCommentCourse = CommentCourseDAO
                         .getCommentCourseByAccountAndShareCourse(shareCourse, CONFIG.STATE_GOOT);
@@ -390,9 +451,12 @@ public class CourseDetailControllerAdmin {
                         .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warn", "Đây là thư mục. Không xem được."));
                 return;
             }
-            if (indexData != null) {//&& indexData.getColumn1().equals("application/pdf")
+            if (indexData != null) {
                 Document document = FileDAO.getDocumentByIdIndex(indexData.getIdindex());
                 FileUtil fileUtil = new FileUtil();
+                listGoodCommentFile = CommentFileDAO.getCommentFileByIndex(indexData.getIdindex(), CONFIG.STATE_GOOT_FILE);
+                listNotGoodCommentFile = CommentFileDAO.getCommentFileByIndex(indexData.getIdindex(), CONFIG.STATE_NOT_GOOT_FILE);
+                
                 if (document != null) {
                     urlFile = fileUtil.getLinkFile(document.getSrc());
 
@@ -760,6 +824,47 @@ public class CourseDetailControllerAdmin {
 
     public void setSelectTypeComment(String selectTypeComment) {
         this.selectTypeComment = selectTypeComment;
+    }
+
+    public String getContent_file() {
+        return content_file;
+    }
+
+    public void setContent_file(String content_file) {
+        this.content_file = content_file;
+    }
+
+    public List<CommentFile> getListGoodCommentFile() {
+        return listGoodCommentFile;
+    }
+
+    public void setListGoodCommentFile(List<CommentFile> listGoodCommentFile) {
+        this.listGoodCommentFile = listGoodCommentFile;
+    }
+
+    public List<CommentFile> getListNotGoodCommentFile() {
+        return listNotGoodCommentFile;
+    }
+
+    public void setListNotGoodCommentFile(List<CommentFile> listNotGoodCommentFile) {
+        this.listNotGoodCommentFile = listNotGoodCommentFile;
+    }
+
+    public String getSelectTypeCommentFile() {
+        return selectTypeCommentFile;
+    }
+
+    public void setSelectTypeCommentFile(String selectTypeCommentFile) {
+        this.selectTypeCommentFile = selectTypeCommentFile;
+    }
+
+    public CommentFile getSelectedCommentFile() {
+        if(selectedCommentFile == null) selectedCommentFile = new CommentFile();
+        return selectedCommentFile;
+    }
+
+    public void setSelectedCommentFile(CommentFile selectedCommentFile) {
+        this.selectedCommentFile = selectedCommentFile;
     }
 
 }

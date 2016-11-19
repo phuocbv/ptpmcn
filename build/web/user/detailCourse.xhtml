@@ -105,9 +105,6 @@
                                     <f:setPropertyActionListener target="#{courseDetailController.index}"
                                                                  value="#{courseDetailController.indexFromSelectElement()}"/>
                                 </p:menuitem>
-
-                                <p:menuitem value="Chia sẻ file" rendered="#{courseDetailController.cloned}"/>
-
                                 <p:menuitem value="Xóa" oncomplete="PF('dialogConfirmDelete').show()"
                                             rendered="#{courseDetailController.cloned}"/>
                             </p:contextMenu>
@@ -177,9 +174,10 @@
                 </p:outputPanel>
 
                 <div class="EmptyBox5"></div>
-                <p:outputLabel value="Bình luận về khóa học"/>
+                
 
-                <p:outputPanel id="writeComment">
+                <p:outputPanel id="writeComment" rendered="#{!courseDetailController.cloned}">
+                    <p:outputLabel value="Bình luận về khóa học"/> 
                     <p:panelGrid>
                         <p:row>
                             <p:column style="width: 70%">
@@ -203,7 +201,7 @@
                     </p:panelGrid>
                 </p:outputPanel>
 
-                <p:outputPanel id="comment">
+                <p:outputPanel id="comment" rendered="#{!courseDetailController.cloned}">
                     <p:tabView>
                         <p:tab title="Bình luận tốt">
                             <ui:repeat value="#{courseDetailController.listGoodCommentCourse}" var="comment">

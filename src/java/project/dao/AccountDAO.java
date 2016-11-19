@@ -92,6 +92,27 @@ public class AccountDAO {
         }
         return result;
     }
+    
+    public static boolean deleteAccountById(int idAccount) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+        boolean result = false;
+        try {
+            tx = session.beginTransaction();
+            Account ac = (Account) session.get(Account.class, idAccount);
+            session.delete(ac);
+            tx.commit();
+            result = true;
+        } catch (HibernateException e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+        return result;
+    }
 
     public static Account getAccountByUsername(Account account) {
         Account result = null;
@@ -251,6 +272,43 @@ public class AccountDAO {
             pstm.setInt(1, courseCurrent.getIdcourse());
             pstm.setInt(2, adminCurrent.getIdaccount());
             pstm.setInt(3, 0);
+            ResultSet rs = pstm.executeQuery();
+            while (rs.next()) {
+                Account item = new Account();
+                item.setIdaccount(rs.getInt("idaccount"));
+                item.setUsername(rs.getString("username"));
+                item.setPassword(rs.getString("password"));
+                item.setAccountName(rs.getString("account_name"));
+                item.setCreateDate(rs.getString("create_date"));
+                item.setColumn1(rs.getString("column1"));
+                item.setColumn2(rs.getString("column2"));
+                list.add(item);
+            }
+            System.out.println("danh sach account chua duoc share khoa hoc " + list.size() );
+            rs.close();
+            conn.commit();
+        } catch (SQLException ex) {
+            if (conn != null) {
+                conn.rollback();
+            }
+            Logger.getLogger(AccountDAO.class.getName()).log(Level.SEVERE, "error-getListAccountUserByAdminCreate", ex);
+        } finally {
+            if (conn != null) {
+                conn.close();
+            }
+        }
+        return list;
+    }
+    
+    public static List<Account> getListAccountInCourse(Account adminCurrent, Course courseCurrent) throws SQLException {
+        List<Account> list = null;
+        Connection conn = null;
+        try {
+            list = new ArrayList<>();
+            conn = JDBC.connectDB();
+            conn.setAutoCommit(false);
+            PreparedStatement pstm = conn.prepareStatement(SQL.GET_LIST_ACCOUNT_IN_COURSE);
+            pstm.setInt(1, courseCurrent.getIdcourse());
             ResultSet rs = pstm.executeQuery();
             while (rs.next()) {
                 Account item = new Account();

@@ -17,6 +17,8 @@ public class CONFIG {
     public static final String CONFIG_NOT_CLONE = "no";
     
     public static final String STATE_GOOT = "good";
+    public static final String STATE_GOOT_FILE = "good";
+    public static final String STATE_NOT_GOOT_FILE = "not_good";
     public static final String STATE_NOT_GOOT = "not_good";
     public static final String STATE_CURRENT = "";
 }

@@ -5,10 +5,15 @@
         <group>
             <file>file:/home/dacuoi/Documents/Project/WebApplication2/src/java/project/controllerAdmin/CourseDetailControllerAdmin.java</file>
             <file>file:/home/dacuoi/Documents/Project/WebApplication2/web/admin/detailCourse_2.xhtml</file>
-            <file>file:/home/dacuoi/Documents/Project/WebApplication2/src/java/project/DO/CommentCourse.java</file>
+            <file>file:/home/dacuoi/Documents/Project/WebApplication2/src/java/project/controllerAdmin/MemberController.java</file>
+            <file>file:/home/dacuoi/Documents/Project/WebApplication2/src/java/project/dao/ShareCourseDAO.java</file>
+            <file>file:/home/dacuoi/Documents/Project/WebApplication2/src/java/project/config/SQL.java</file>
             <file>file:/home/dacuoi/Documents/Project/WebApplication2/src/java/project/dao/AccountDAO.java</file>
-            <file>file:/home/dacuoi/Documents/Project/WebApplication2/src/java/project/dao/CommentCourseDAO.java</file>
+            <file>file:/home/dacuoi/Documents/Project/WebApplication2/web/user/detailCourse.xhtml</file>
+            <file>file:/home/dacuoi/Documents/Project/WebApplication2/web/admin/home.xhtml</file>
+            <file>file:/home/dacuoi/Documents/Project/WebApplication2/web/admin/shared_document.xhtml</file>
             <file>file:/home/dacuoi/Documents/Project/WebApplication2/src/java/project/dao/CommentFileDAO.java</file>
+            <file>file:/home/dacuoi/Documents/Project/WebApplication2/web/admin/memberInCourse.xhtml</file>
         </group>
     </open-files>
 </project-private>
