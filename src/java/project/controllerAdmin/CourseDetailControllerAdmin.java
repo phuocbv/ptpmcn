@@ -21,12 +21,14 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.Part;
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.event.TabChangeEvent;
 import org.primefaces.event.TreeDragDropEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.TreeNode;
 import org.primefaces.model.UploadedFile;
 import project.DO.Account;
+import project.DO.CommentCourse;
 import project.DO.Course;
 import project.DO.Document;
 import project.DO.Index;
@@ -34,6 +36,7 @@ import project.DO.ShareCourse;
 import project.config.CONFIG;
 import project.controller.CourseDetailController;
 import project.dao.AccountDAO;
+import project.dao.CommentCourseDAO;
 import project.dao.CourseDAO;
 import project.dao.FileDAO;
 import project.dao.IndexDAO;
@@ -69,8 +72,13 @@ public class CourseDetailControllerAdmin {
     private boolean mp3 = false;
     private boolean pdf = false;
     private boolean image = false;
-
+    private String content = "";
+    private boolean myComment = false;
+    private CommentCourse selectedCommentCourse;
+    private List<CommentCourse> listGoodCommentCourse;
+    private List<CommentCourse> listNotGoodCommentCourse;
     private String nameApp = "/WebApplication2";
+    private String selectTypeComment = "1";
 
     private List<String> listIdAccountByAdminCreate;
     private List<String> listIdAccountAttendedNotShared;
@@ -78,6 +86,7 @@ public class CourseDetailControllerAdmin {
     private List<Account> listAccountManageByAdmin;
 
     SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+    private String STATE_CURRENT = "";
 
     public CourseDetailControllerAdmin() {
         FacesContext context = FacesContext.getCurrentInstance();
@@ -88,6 +97,7 @@ public class CourseDetailControllerAdmin {
 
         listIdAccountByAdminCreate = new ArrayList<>();
         listIdAccountAttendedNotShared = new ArrayList<>();
+        selectedCommentCourse = new CommentCourse();
     }
 
     public int getCourseIdCurrent() {
@@ -101,7 +111,13 @@ public class CourseDetailControllerAdmin {
             courseCurrent = CourseDAO.getCourseById(courseIdCurrent);
             shareCourse = ShareCourseDAO.getShareCouseByIdAccountAndIdCourseAdmin(account.getIdaccount(), courseIdCurrent);
             resetTree();
+            shareCourse.setColumn1(String.valueOf(shareCourse.getIdshareCourse()));
+            listGoodCommentCourse = CommentCourseDAO
+                    .getCommentCourseByAccountAndShareCourse(shareCourse, CONFIG.STATE_GOOT);
+            listNotGoodCommentCourse = CommentCourseDAO
+                    .getCommentCourseByAccountAndShareCourse(shareCourse, CONFIG.STATE_NOT_GOOT);
         }
+
     }
 
     public Index indexFromSelectElement() {
@@ -110,6 +126,64 @@ public class CourseDetailControllerAdmin {
             index = (Index) selectNode.getData();
         }
         return index;
+    }
+
+    public String returnAccountById(int idAccount) {
+        if (idAccount == account.getIdaccount()) {
+            myComment = true;
+            return "Tôi";
+        }
+        myComment = false;
+        return AccountDAO.getAccountById(idAccount).getUsername();
+    }
+
+    public void addCommentCourse() {
+        if (!content.equals("")) {
+            if (selectTypeComment.equals("1")) {
+                STATE_CURRENT = CONFIG.STATE_GOOT;
+            } else {
+                STATE_CURRENT = CONFIG.STATE_NOT_GOOT;
+            }
+            SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            CommentCourse cc = new CommentCourse();
+            cc.setContent(content);
+            cc.setIdShareCreate(Integer.parseInt(shareCourse.getColumn1()));
+            cc.setIdAccount(account.getIdaccount());
+            cc.setCreateDate(dt.format(new Date()));
+            cc.setColumn1(STATE_CURRENT);
+            int result = CommentCourseDAO.addCommentCourse(cc);
+            if (result > 0) {
+                content = "";
+                listGoodCommentCourse = CommentCourseDAO
+                        .getCommentCourseByAccountAndShareCourse(shareCourse, CONFIG.STATE_GOOT);
+                listNotGoodCommentCourse = CommentCourseDAO
+                        .getCommentCourseByAccountAndShareCourse(shareCourse, CONFIG.STATE_NOT_GOOT);
+                FacesContext.getCurrentInstance()
+                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Bình luận thành công."));
+            } else {
+                FacesContext.getCurrentInstance()
+                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Lỗi."));
+            }
+        }
+    }
+
+    public void deleteComment() {
+        System.out.print("vao");
+        System.out.println(selectedCommentCourse.getIdcommentCourse());
+        if (selectedCommentCourse != null) {
+            boolean b = CommentCourseDAO.deleteCommentCourseById(selectedCommentCourse);
+            if (b) {
+                listGoodCommentCourse = CommentCourseDAO
+                        .getCommentCourseByAccountAndShareCourse(shareCourse, CONFIG.STATE_GOOT);
+                listNotGoodCommentCourse = CommentCourseDAO
+                        .getCommentCourseByAccountAndShareCourse(shareCourse, CONFIG.STATE_NOT_GOOT);
+                FacesContext.getCurrentInstance()
+                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Xóa thành công."));
+            } else {
+                FacesContext.getCurrentInstance()
+                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Lỗi."));
+            }
+        }
     }
 
     public void editForder() {
@@ -191,6 +265,7 @@ public class CourseDetailControllerAdmin {
             index.setIdParent(select.getIdindex());
             index.setLevel(select.getLevel() + 1);
             index.setColumn1("application/foder");
+            index.setColumn2("0");
             int idIndex = IndexDAO.addIndex(index);
             resetTree();
             if (idIndex > 0) {
@@ -263,7 +338,7 @@ public class CourseDetailControllerAdmin {
 
     public void addMemberInCourse() {
         if (listIdAccountByAdminCreate != null && listIdAccountByAdminCreate.size() > 0) {
-            boolean result = ShareCourseDAO.insertMemberInCourse(listIdAccountByAdminCreate, account, courseCurrent);
+            boolean result = ShareCourseDAO.insertMemberInCourse(listIdAccountByAdminCreate, account, courseCurrent, shareCourse);
             if (result) {
                 FacesContext.getCurrentInstance()
                         .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Thêm thành công."));
@@ -365,18 +440,18 @@ public class CourseDetailControllerAdmin {
                     FacesContext.getCurrentInstance()
                             .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Xóa lỗi."));
                 }
-            } else if (s.getColumn1().equals("application/foder")){
+            } else if (s.getColumn1().equals("application/foder")) {
                 boolean b = IndexDAO.getIndexByIdParent(s);
-                if (!b){
+                if (!b) {
                     IndexDAO.deleteIndexById(s);
                     resetTree();
                     FacesContext.getCurrentInstance()
-                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Xóa thư mục thành công"));
-                } else{
+                            .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Xóa thư mục thành công"));
+                } else {
                     FacesContext.getCurrentInstance()
-                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warn", "Thư mục thư mục hoặc file con. Không xóa được"));
+                            .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warn", "Thư mục thư mục hoặc file con. Không xóa được"));
                 }
-            } else{
+            } else {
                 FacesContext.getCurrentInstance()
                         .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warn", "Bạn không được xóa thư mục gốc"));
             }
@@ -421,23 +496,25 @@ public class CourseDetailControllerAdmin {
         TreeNode dropNode = event.getDropNode();
         Index drag = (Index) dragNode.getData();//keo
         Index drop = (Index) dropNode.getData();//tha
-        if (drag.getColumn1().equals("root")) {
+        if (drag.getColumn1().equals("application/foder")
+                || drag.getColumn1().equals("root")) {
             FacesContext.getCurrentInstance()
-                    .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warn", "Đây là thư mục gốc. Không di chuyển được"));
-        } else if (!drop.getColumn1().equals("application/foder")) {
+                    .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warn", "Đây là thư mục. Không thay đổi được."));
+        } else if (!drop.getColumn1().equals("application/foder")
+                && !drop.getColumn1().equals("root")) {
             FacesContext.getCurrentInstance()
                     .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warn", "Vị trí phải nằm trong thư mục"));
-        } else if (drop.getColumn1().equals("application/foder")
-                && drop.getLevel() >= 2 && drag.getColumn1().equals("application/foder")) {
-            FacesContext.getCurrentInstance()
-                    .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warn", "Không được vì thư mục đến là thư mục bậc 3"));
         } else {
-            
+            boolean b = IndexDAO.changeIndex(drag, drop);
+            if (b) {
+                FacesContext.getCurrentInstance()
+                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Thay đổi thành công."));
+            } else {
+                FacesContext.getCurrentInstance()
+                        .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Lỗi."));
+            }
         }
-
-        //int dropIndex = event.getDropIndex();
-        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Dragged " + drag.getName(), "Dropped on " + drop.getName() + " at ");
-        FacesContext.getCurrentInstance().addMessage(null, message);
+        resetTree();
     }
 
     public List<Account> listAccountUserByAdminCreate() {
@@ -632,6 +709,57 @@ public class CourseDetailControllerAdmin {
 
     public void setImage(boolean image) {
         this.image = image;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public boolean isMyComment() {
+        return myComment;
+    }
+
+    public void setMyComment(boolean myComment) {
+        this.myComment = myComment;
+    }
+
+    public List<CommentCourse> getListGoodCommentCourse() {
+        return listGoodCommentCourse;
+    }
+
+    public void setListGoodCommentCourse(List<CommentCourse> listGoodCommentCourse) {
+        this.listGoodCommentCourse = listGoodCommentCourse;
+    }
+
+    public List<CommentCourse> getListNotGoodCommentCourse() {
+        return listNotGoodCommentCourse;
+    }
+
+    public void setListNotGoodCommentCourse(List<CommentCourse> listNotGoodCommentCourse) {
+        this.listNotGoodCommentCourse = listNotGoodCommentCourse;
+    }
+
+    public CommentCourse getSelectedCommentCourse() {
+        if (selectedCommentCourse == null) {
+            selectedCommentCourse = new CommentCourse();
+        }
+        return selectedCommentCourse;
+    }
+
+    public void setSelectedCommentCourse(CommentCourse selectedCommentCourse) {
+        this.selectedCommentCourse = selectedCommentCourse;
+    }
+
+    public String getSelectTypeComment() {
+        return selectTypeComment;
+    }
+
+    public void setSelectTypeComment(String selectTypeComment) {
+        this.selectTypeComment = selectTypeComment;
     }
 
 }

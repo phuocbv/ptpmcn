@@ -14,6 +14,11 @@
 
 /* Component containers
 ----------------------------------*/
+
+.ui-radiobutton-box.ui-widget.ui-corner-all.ui-state-default.ui-state-active {
+    background: #c7eaf7;
+}
+
 .ui-widget { font-family: "Helvetica Neue",Helvetica,Arial,sans-serif; font-size: 1em; }
 .ui-widget .ui-widget { font-size: 1em; }
 .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button { font-family: "Helvetica Neue",Helvetica,Arial,sans-serif; font-size: 1em; }
@@ -379,7 +384,9 @@
     color: #333333;
     border: 1px solid #eed3d7;
 }
-
+.ui-inputfield.ui-inputtextarea.ui-widget.ui-state-default.ui-corner-all.ui-inputtextarea-resizable {
+    background: #fff;
+}
 /** TabView **/
 .ui-tabview.ui-widget-content {
     background: transparent none;
@@ -631,6 +638,11 @@
       -ms-transition: width 0.6s ease;
        -o-transition: width 0.6s ease;
           transition: width 0.6s ease;
+}
+
+.ui-fieldset-legend.ui-corner-all.ui-state-default {
+    background: #c7eaf7;
+    border: none;
 }
 
 /** Dialog **/

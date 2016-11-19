@@ -20,7 +20,7 @@ import project.DO.ShareCourse;
  * @author DA CUOI
  */
 public class IndexDAO {
-
+    
     public static int addIndex(Index index) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction tx = null;
@@ -39,7 +39,7 @@ public class IndexDAO {
         }
         return indexID;
     }
-
+    
     public static Index getIndexById(int id) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction tx = null;
@@ -58,7 +58,7 @@ public class IndexDAO {
         }
         return result;
     }
-
+    
     public static boolean updateIndex(Index index) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction tx = null;
@@ -81,7 +81,30 @@ public class IndexDAO {
         }
         return result;
     }
-
+    
+    public static boolean changeIndex(Index drag, Index drop) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+        boolean result = false;
+        try {
+            tx = session.beginTransaction();
+            Index ind = (Index) session.get(Index.class, drag.getIdindex());
+            ind.setIdParent(drop.getIdindex());
+            ind.setLevel(drop.getLevel() + 1);
+            session.update(ind);
+            tx.commit();
+            result = true;
+        } catch (HibernateException e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+        return result;
+    }
+    
     public static boolean deleteIndexById(Index index) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction tx = null;
@@ -103,7 +126,7 @@ public class IndexDAO {
         }
         return result;
     }
-
+    
     public static boolean deleteIndexByIdShareCourse(ShareCourse shareCourse) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction tx = null;
@@ -128,7 +151,7 @@ public class IndexDAO {
         }
         return result;
     }
-
+    
     public static boolean getIndexByIdParent(Index index) {
         List<Index> list = null;
         Session session = HibernateUtil.getSessionFactory().openSession();
@@ -140,7 +163,9 @@ public class IndexDAO {
             query.setParameter("id_parent", index.getIdindex());
             list = query.list();
             tx.commit();
-            if (list != null && list.size() > 0) result = true;
+            if (list != null && list.size() > 0) {
+                result = true;
+            }
         } catch (NullPointerException e) {
             if (tx != null) {
                 tx.rollback();
@@ -156,7 +181,7 @@ public class IndexDAO {
         }
         return result;
     }
-
+    
     public static List<Index> getIndexByIdShareCourse(ShareCourse shareCourse) {
         List<Index> list = null;
         Session session = HibernateUtil.getSessionFactory().openSession();
@@ -183,7 +208,7 @@ public class IndexDAO {
         }
         return list;
     }
-
+    
     public static boolean cloneCourse(List<Index> list, ShareCourse shareCourse) {
         boolean result = false;
         Session session = HibernateUtil.getSessionFactory().openSession();
