@@ -14,6 +14,11 @@
 
 /* Component containers
 ----------------------------------*/
+
+.ui-radiobutton-box.ui-widget.ui-corner-all.ui-state-default.ui-state-active {
+    background: #c7eaf7;
+}
+
 .ui-widget { font-family: "Helvetica Neue",Helvetica,Arial,sans-serif; font-size: 1em; }
 .ui-widget .ui-widget { font-size: 1em; }
 .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button { font-family: "Helvetica Neue",Helvetica,Arial,sans-serif; font-size: 1em; }

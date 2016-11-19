@@ -68,6 +68,8 @@ public class CourseDetailController {
     private boolean pdf = false;
     private boolean image = false;
     private String nameApp = "/WebApplication2";
+    private String selectTypeComment = "1";
+    private String STATE_CURRENT = "";
     private Index index;
     private String content;
     SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
@@ -126,18 +128,25 @@ public class CourseDetailController {
 
     public void addCommentCourse() {
         if (!content.equals("")) {
-            SimpleDateFormat dt = new SimpleDateFormat("yyyyy-mm-dd hh:mm:ss");
+            if (selectTypeComment.equals("1")) {
+                STATE_CURRENT = CONFIG.STATE_GOOT;
+            } else {
+                STATE_CURRENT = CONFIG.STATE_NOT_GOOT;
+            }
+            SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             CommentCourse cc = new CommentCourse();
             cc.setContent(content);
             cc.setIdShareCreate(Integer.parseInt(shareCourseCurrent.getColumn1()));
             cc.setIdAccount(account.getIdaccount());
             cc.setCreateDate(dt.format(new Date()));
-            cc.setColumn1(CONFIG.STATE_GOOT);
+            cc.setColumn1(STATE_CURRENT);
             int result = CommentCourseDAO.addCommentCourse(cc);
             if (result > 0) {
                 content = "";
                 listGoodCommentCourse = CommentCourseDAO
                         .getCommentCourseByAccountAndShareCourse(shareCourseCurrent, CONFIG.STATE_GOOT);
+                listNotGoodCommentCourse = CommentCourseDAO
+                        .getCommentCourseByAccountAndShareCourse(shareCourseCurrent, CONFIG.STATE_NOT_GOOT);
                 FacesContext.getCurrentInstance()
                         .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Bình luận thành công."));
             } else {
@@ -617,5 +626,13 @@ public class CourseDetailController {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getSelectTypeComment() {
+        return selectTypeComment;
+    }
+
+    public void setSelectTypeComment(String selectTypeComment) {
+        this.selectTypeComment = selectTypeComment;
     }
 }

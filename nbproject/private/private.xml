@@ -4,19 +4,11 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/home/dacuoi/Documents/Project/WebApplication2/src/java/project/controllerAdmin/CourseDetailControllerAdmin.java</file>
-            <file>file:/home/dacuoi/Documents/Project/WebApplication2/src/java/project/controllerAdmin/MyDocumentControllerAdmin.java</file>
-            <file>file:/home/dacuoi/Documents/Project/WebApplication2/src/java/project/controllerAdmin/SharedDocumentControllerAdmin.java</file>
-            <file>file:/home/dacuoi/Documents/Project/WebApplication2/web/user/shared_document.xhtml</file>
-            <file>file:/home/dacuoi/Documents/Project/WebApplication2/src/java/project/dao/IndexDAO.java</file>
-            <file>file:/home/dacuoi/Documents/Project/WebApplication2/web/admin/shared_document.xhtml</file>
-            <file>file:/home/dacuoi/Documents/Project/WebApplication2/web/admin/my_document_1.xhtml</file>
-            <file>file:/home/dacuoi/Documents/Project/WebApplication2/src/java/project/controller/HomeController.java</file>
-            <file>file:/home/dacuoi/Documents/Project/WebApplication2/src/java/project/controller/CourseDetailController.java</file>
-            <file>file:/home/dacuoi/Documents/Project/WebApplication2/web/user/detailCourse.xhtml</file>
-            <file>file:/home/dacuoi/Documents/Project/WebApplication2/web/user/home.xhtml</file>
-            <file>file:/home/dacuoi/Documents/Project/WebApplication2/src/java/project/controllerAdmin/HomeControllerAdmin.java</file>
-            <file>file:/home/dacuoi/Documents/Project/WebApplication2/src/java/project/controller/MyDocumentController.java</file>
-            <file>file:/home/dacuoi/Documents/Project/WebApplication2/web/user/my_document_1.xhtml</file>
+            <file>file:/home/dacuoi/Documents/Project/WebApplication2/web/admin/detailCourse_2.xhtml</file>
+            <file>file:/home/dacuoi/Documents/Project/WebApplication2/src/java/project/DO/CommentCourse.java</file>
+            <file>file:/home/dacuoi/Documents/Project/WebApplication2/src/java/project/dao/AccountDAO.java</file>
+            <file>file:/home/dacuoi/Documents/Project/WebApplication2/src/java/project/dao/CommentCourseDAO.java</file>
+            <file>file:/home/dacuoi/Documents/Project/WebApplication2/src/java/project/dao/CommentFileDAO.java</file>
         </group>
     </open-files>
 </project-private>

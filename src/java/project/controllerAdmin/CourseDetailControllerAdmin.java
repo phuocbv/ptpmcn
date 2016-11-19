@@ -21,6 +21,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.Part;
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.event.TabChangeEvent;
 import org.primefaces.event.TreeDragDropEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -77,6 +78,7 @@ public class CourseDetailControllerAdmin {
     private List<CommentCourse> listGoodCommentCourse;
     private List<CommentCourse> listNotGoodCommentCourse;
     private String nameApp = "/WebApplication2";
+    private String selectTypeComment = "1";
 
     private List<String> listIdAccountByAdminCreate;
     private List<String> listIdAccountAttendedNotShared;
@@ -84,6 +86,7 @@ public class CourseDetailControllerAdmin {
     private List<Account> listAccountManageByAdmin;
 
     SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+    private String STATE_CURRENT = "";
 
     public CourseDetailControllerAdmin() {
         FacesContext context = FacesContext.getCurrentInstance();
@@ -94,6 +97,7 @@ public class CourseDetailControllerAdmin {
 
         listIdAccountByAdminCreate = new ArrayList<>();
         listIdAccountAttendedNotShared = new ArrayList<>();
+        selectedCommentCourse = new CommentCourse();
     }
 
     public int getCourseIdCurrent() {
@@ -135,18 +139,25 @@ public class CourseDetailControllerAdmin {
 
     public void addCommentCourse() {
         if (!content.equals("")) {
-            SimpleDateFormat dt = new SimpleDateFormat("yyyyy-mm-dd hh:mm:ss");
+            if (selectTypeComment.equals("1")) {
+                STATE_CURRENT = CONFIG.STATE_GOOT;
+            } else {
+                STATE_CURRENT = CONFIG.STATE_NOT_GOOT;
+            }
+            SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             CommentCourse cc = new CommentCourse();
             cc.setContent(content);
             cc.setIdShareCreate(Integer.parseInt(shareCourse.getColumn1()));
             cc.setIdAccount(account.getIdaccount());
             cc.setCreateDate(dt.format(new Date()));
-            cc.setColumn1(CONFIG.STATE_GOOT);
+            cc.setColumn1(STATE_CURRENT);
             int result = CommentCourseDAO.addCommentCourse(cc);
             if (result > 0) {
                 content = "";
                 listGoodCommentCourse = CommentCourseDAO
                         .getCommentCourseByAccountAndShareCourse(shareCourse, CONFIG.STATE_GOOT);
+                listNotGoodCommentCourse = CommentCourseDAO
+                        .getCommentCourseByAccountAndShareCourse(shareCourse, CONFIG.STATE_NOT_GOOT);
                 FacesContext.getCurrentInstance()
                         .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Bình luận thành công."));
             } else {
@@ -157,11 +168,15 @@ public class CourseDetailControllerAdmin {
     }
 
     public void deleteComment() {
+        System.out.print("vao");
+        System.out.println(selectedCommentCourse.getIdcommentCourse());
         if (selectedCommentCourse != null) {
-            boolean b = CommentCourseDAO.deleteCommentCourse(selectedCommentCourse);
+            boolean b = CommentCourseDAO.deleteCommentCourseById(selectedCommentCourse);
             if (b) {
                 listGoodCommentCourse = CommentCourseDAO
                         .getCommentCourseByAccountAndShareCourse(shareCourse, CONFIG.STATE_GOOT);
+                listNotGoodCommentCourse = CommentCourseDAO
+                        .getCommentCourseByAccountAndShareCourse(shareCourse, CONFIG.STATE_NOT_GOOT);
                 FacesContext.getCurrentInstance()
                         .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Xóa thành công."));
             } else {
@@ -737,6 +752,14 @@ public class CourseDetailControllerAdmin {
 
     public void setSelectedCommentCourse(CommentCourse selectedCommentCourse) {
         this.selectedCommentCourse = selectedCommentCourse;
+    }
+
+    public String getSelectTypeComment() {
+        return selectTypeComment;
+    }
+
+    public void setSelectTypeComment(String selectTypeComment) {
+        this.selectTypeComment = selectTypeComment;
     }
 
 }

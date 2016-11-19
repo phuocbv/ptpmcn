@@ -60,6 +60,28 @@ public class CommentCourseDAO {
         }
         return result;
     }
+    
+    public static boolean deleteCommentCourseById(CommentCourse cc) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+        boolean result = false;
+        try {
+            tx = session.beginTransaction();
+            CommentCourse ind = (CommentCourse) session.get(CommentCourse.class,
+                    cc.getIdcommentCourse());
+            session.delete(ind);
+            tx.commit();
+            result = true;
+        } catch (HibernateException e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+        return result;
+    }
 
     public static List<CommentCourse> getCommentCourseByAccountAndShareCourse(ShareCourse shareCourse, String states) {
         Session session = HibernateUtil.getSessionFactory().openSession();

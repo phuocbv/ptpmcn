@@ -177,13 +177,22 @@
                 <p:outputPanel id="writeComment">
                     <p:panelGrid>
                         <p:row>
-                            <p:column styleClass="Wid90">
+                            <p:column style="width: 70%">
                                 <p:inputTextarea styleClass="Wid100" value="#{courseDetailControllerAdmin.content}"></p:inputTextarea>
                             </p:column>
-                            <p:column styleClass="Wid10">
+
+                            <p:column style="width: 10%">
+                                <p:selectOneMenu id="console" value="#{courseDetailControllerAdmin.selectTypeComment}">
+                                    <f:selectItem itemLabel="Bình luận tốt" itemValue="1" />
+                                    <f:selectItem itemLabel="Bình luận không tốt" itemValue="2" />
+                                </p:selectOneMenu>
+                            </p:column>
+
+                            <p:column style="width: 10%">
                                 <p:commandButton value="Bình luận" 
                                                  actionListener="#{courseDetailControllerAdmin.addCommentCourse()}"
-                                                 update=":form:comment, form:writeComment"></p:commandButton>
+                                                 update=":form:comment, :form:writeComment"></p:commandButton>
+
                             </p:column>
                         </p:row>
                     </p:panelGrid>
@@ -192,15 +201,15 @@
                 <p:outputPanel id="comment">
                     <p:tabView>
                         <p:tab title="Bình luận tốt">
-                            <ui:repeat value="#{courseDetailControllerAdmin.listGoodCommentCourse}" var="comment" >
+                            <ui:repeat value="#{courseDetailControllerAdmin.listGoodCommentCourse}" var="comment">
                                 <p:fieldset legend="#{courseDetailControllerAdmin.returnAccountById(comment.idAccount)}" style="margin-bottom:20px">
                                     <h:panelGrid columns="1" cellpadding="5">
                                         <h:outputText value="#{comment.content}" />
                                         <p:row>
                                             <p:column styleClass="Wid100 TexRight">
                                                 <p:commandButton value="Xóa" update=":form:comment"
-                                                                 >
-                                                    <f:setPropertyActionListener target="#{}"
+                                                                 action="#{courseDetailControllerAdmin.deleteComment()}">
+                                                    <f:setPropertyActionListener target="#{courseDetailControllerAdmin.selectedCommentCourse}"
                                                                                  value="#{comment}"/>
                                                 </p:commandButton>
                                             </p:column>
@@ -212,8 +221,17 @@
                         <p:tab title="Bình luận không tốt">
                             <ui:repeat value="#{courseDetailControllerAdmin.listNotGoodCommentCourse}" var="comment">
                                 <p:fieldset legend="#{courseDetailControllerAdmin.returnAccountById(comment.idAccount)}" style="margin-bottom:20px">
-                                    <h:panelGrid columns="2" cellpadding="5">
+                                    <h:panelGrid columns="1" cellpadding="5">
                                         <h:outputText value="#{comment.content}" />
+                                        <p:row>
+                                            <p:column styleClass="Wid100 TexRight">
+                                                <p:commandButton value="Xóa" update=":form:comment"
+                                                                 action="#{courseDetailControllerAdmin.deleteComment()}">
+                                                    <f:setPropertyActionListener target="#{courseDetailControllerAdmin.selectedCommentCourse}"
+                                                                                 value="#{comment}"/>
+                                                </p:commandButton>
+                                            </p:column>
+                                        </p:row>
                                     </h:panelGrid>
                                 </p:fieldset>
                             </ui:repeat>

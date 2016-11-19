@@ -16,6 +16,7 @@ public class CONFIG {
     public static final String CONFIG_CLONED = "yes";
     public static final String CONFIG_NOT_CLONE = "no";
     
-    public static final String STATE_GOOT = "goot";
-    public static final String STATE_NOT_GOOT = "not_goot";
+    public static final String STATE_GOOT = "good";
+    public static final String STATE_NOT_GOOT = "not_good";
+    public static final String STATE_CURRENT = "";
 }
